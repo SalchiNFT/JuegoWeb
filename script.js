@@ -83,7 +83,8 @@ function startGame(){
         return;
     }
     
-    document.body.classList.remove('setup-bg');
+    // Quita el fondo de setup y aldea, pone el fondo de juego
+    document.body.classList.remove('setup-bg', 'village-bg');
     document.body.classList.add('game-bg');
 
     const attackArea = document.getElementById("attackCardArea");
@@ -111,8 +112,9 @@ function startGame(){
     selectedAttack = null;
     selectedDefense = null;
 
-
+    // Oculta setup y aldea, muestra gameArea
     document.getElementById("setup").classList.add("hidden");
+    document.getElementById("villageArea").classList.add("hidden");
     document.getElementById("gameArea").classList.remove("hidden");
 
     titleEl.innerText = `¡${playerName} VS Máquina!`;
@@ -299,6 +301,33 @@ function checkGameOver(){
     }
 }
 
+// ------------------------------------------------------------------
+// FUNCIONES DE NAVEGACIÓN DE LA ALDEA
+// ------------------------------------------------------------------
+
+// Muestra la pantalla de la aldea y cambia el fondo
+function showVillageScreen() {
+    // Aseguramos que el fondo de la aldea esté activo
+    document.body.classList.remove('setup-bg', 'game-bg');
+    document.body.classList.add('village-bg');
+    
+    // Ocultar la pantalla de combate y setup
+    document.getElementById("gameArea").classList.add("hidden");
+    document.getElementById("setup").classList.add("hidden");
+
+    // Mostrar el área de la aldea
+    document.getElementById("villageArea").classList.remove("hidden"); 
+}
+
+// Navega de la Aldea a la Pantalla de Creación de Personaje (Training)
+function goToSetup() {
+    document.getElementById('setup').classList.remove('hidden');
+    document.getElementById('villageArea').classList.add('hidden');
+    
+    document.body.classList.remove('village-bg');
+    document.body.classList.add('setup-bg');
+}
+
 function resetGame(){
     if (!confirm("¿Estás seguro de que quieres reiniciar el juego? Se perderá todo el progreso actual de la partida.")) {
         return;
@@ -311,12 +340,10 @@ function resetGame(){
     selectedAttack = null;
     selectedDefense = null;
     
-    document.getElementById("gameArea").classList.add("hidden");
-    document.getElementById("setup").classList.remove("hidden");
     logContent.innerHTML="";
     
-    document.body.classList.remove('game-bg');
-    document.body.classList.add('setup-bg');
+    // Al reiniciar, vamos a la pantalla de la aldea.
+    showVillageScreen(); 
     
     document.querySelectorAll('.element-card').forEach(btn => btn.classList.remove('selected'));
 }

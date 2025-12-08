@@ -6,10 +6,10 @@
 <link rel="stylesheet" href="styles.css"> 
 </head>
 
-<body class="setup-bg"> 
+<body class="village-bg"> 
 <div class="container">
 
-<div id="setup">
+<div id="setup" class="hidden"> 
     <h2>Crea tu personaje (5 Elementos disponibles)</h2>
     <input type="text" id="playerName" placeholder="Nombre de tu personaje"><br>
 
@@ -92,6 +92,32 @@
 
 </div>
 
+
+<div id="villageArea">
+    
+    <div id="villageHotspots">
+        
+        <button id="hotspot-workshop" class="hotspot-btn">
+            WORKSHOP 🔨
+        </button>
+
+        <button id="hotspot-sanctuary" class="hotspot-btn">
+            SANCTUARY ✨
+        </button>
+        
+        <button id="hotspot-laboratory" class="hotspot-btn">
+            LABORATORY 🧪
+        </button>
+        
+        <button id="hotspot-training" class="hotspot-btn" onclick="goToSetup()">
+            TRAINING ⚔️
+        </button>
+
+        <button id="hotspot-expeditions" class="hotspot-btn">
+            EXPEDITIONS 🗺️
+        </button>
+    </div>
+</div>
 </div>
 
 <script src="script.js"></script>
