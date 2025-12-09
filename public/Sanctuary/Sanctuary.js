@@ -1,9 +1,20 @@
 // public/Sanctuary/Sanctuary.js
 
+import { checkAuthAndRedirect } from '../js/authChecker.js'; 
+
 document.addEventListener('DOMContentLoaded', () => {
+    
+    // 🚨 1. Proteger la página primero
+    checkAuthAndRedirect();
+    
+    // --- CONSTANTES ---
     const MAX_SLOTS = 10;
     const ELEMENTS = ['Agua', 'Fuego', 'Viento', 'Tierra', 'Electricidad'];
+    
+    // 🚨 2. No necesitamos el userId en el script, Passport lo maneja, pero lo mantenemos para referencia:
+    // const CURRENT_USER_ID = sessionStorage.getItem('userId'); 
 
+    // --- ELEMENTOS DE LA UI ---
     const slotsContainer = document.getElementById('characterSlots');
     const creationArea = document.getElementById('creationArea');
     const form = document.getElementById('creationForm');
@@ -11,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const attackSelection = document.getElementById('attackSelection');
     const defenseSelection = document.getElementById('defenseSelection');
     const cancelButton = document.getElementById('cancelCreation');
+    const attackCheckboxes = document.querySelectorAll('input[name="attacks"]');
+    const defenseCheckboxes = document.querySelectorAll('input[name="defenses"]');
 
     let currentCharacters = [];
 
@@ -18,13 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayMessage = (message, isError = true) => {
         messageBox.textContent = message;
         messageBox.className = 'visible';
-        if (!isError) {
-            messageBox.style.backgroundColor = '#d4edda'; // Verde claro para éxito
-            messageBox.style.color = '#155724'; // Texto verde oscuro
-        } else {
-            messageBox.style.backgroundColor = '#fbecec'; // Rojo claro para error
-            messageBox.style.color = '#c0392b'; // Texto rojo oscuro
-        }
+        messageBox.style.backgroundColor = isError ? '#fbecec' : '#d4edda';
+        messageBox.style.color = isError ? '#c0392b' : '#155724';
     };
     const hideCreationForm = () => {
         creationArea.classList.add('hidden');
@@ -32,24 +40,27 @@ document.addEventListener('DOMContentLoaded', () => {
         messageBox.classList.remove('visible');
     };
     const showCreationForm = () => {
+        // Limpiar el estado de error
+        messageBox.classList.remove('visible');
+        // Mostrar formulario
         creationArea.classList.remove('hidden');
         document.getElementById('name').focus();
     };
 
 
-    // --- 1. RENDERIZACIÓN INICIAL DE SLOTS Y ELEMENTOS ---
+    // --- 3. RENDERIZACIÓN DE SLOTS Y ELEMENTOS ---
 
     // Genera las opciones de elementos para ataque y defensa
     const renderElementSelections = () => {
+        attackSelection.innerHTML = ''; // Limpiar
+        defenseSelection.innerHTML = ''; // Limpiar
         ELEMENTS.forEach(element => {
-            // Ataques
             attackSelection.innerHTML += `
                 <label>
                     <input type="checkbox" name="attacks" value="${element} - ATK"> 
                     ${element}
                 </label>
             `;
-            // Defensas
             defenseSelection.innerHTML += `
                 <label>
                     <input type="checkbox" name="defenses" value="${element} - DEF"> 
@@ -57,12 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </label>
             `;
         });
+        // Re-asignar listeners a los nuevos elementos
+        attachSelectionListeners();
     };
-    renderElementSelections(); // Llamar al inicio
 
     // Genera los slots vacíos y llenos
     const renderCharacterSlots = () => {
-        slotsContainer.innerHTML = ''; // Limpiar el contenedor
+        slotsContainer.innerHTML = ''; 
 
         // Renderizar slots llenos
         currentCharacters.forEach(character => {
@@ -73,8 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <small>HP: ${character.hp}</small>
                 <small>ATK: ${character.playerAtk.length} | DEF: ${character.playerDef.length}</small>
             `;
-            // Puedes añadir un listener aquí para ir al personaje o ver detalles:
-            // slot.addEventListener('click', () => window.location.href = `../Character/Details.html?id=${character._id}`);
             slotsContainer.appendChild(slot);
         });
 
@@ -91,21 +101,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (currentCharacters.length >= MAX_SLOTS) {
              displayMessage(`Has alcanzado el límite máximo de ${MAX_SLOTS} personajes.`, false);
+             hideCreationForm();
         } else if (currentCharacters.length > 0) {
-             displayMessage(`Tienes ${currentCharacters.length} personajes creados. Haz clic en (+) para crear más.`, false);
+             // Si hay personajes y slots libres, ocultar el mensaje de éxito inicial
+             messageBox.classList.remove('visible');
         }
     };
 
-    // Obtener personajes del Backend
+    // 🚨 4. Obtener personajes del Backend (Seguro)
     const fetchCharacters = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/characters');
+            // La petición GET no necesita body ni query, Passport la protege
+            const response = await fetch('/api/characters'); 
             
             if (response.ok) {
                 currentCharacters = await response.json();
                 renderCharacterSlots();
+            } else if (response.status === 401) {
+                // Si la sesión expiró (401), el checkAuthAndRedirect() ya debió redirigir
+                console.error("Sesión expirada durante fetch. Redirección pendiente.");
             } else {
-                displayMessage('Error al cargar los personajes existentes.', true);
+                displayMessage(`Error (${response.status}) al cargar los personajes.`, true);
             }
         } catch (error) {
             console.error('Error de conexión:', error);
@@ -113,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // --- 2. LÓGICA DE VALIDACIÓN Y ENVÍO ---
+    // --- 5. LÓGICA DE VALIDACIÓN Y ENVÍO ---
 
     // Validar selección de checkboxes (máximo 2)
     const validateSelection = (event) => {
@@ -127,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // 🚨 VALIDACIÓN CRÍTICA: Máximo 2
+        // VALIDACIÓN CRÍTICA: Máximo 2
         if (checkedCount > 2) {
             displayMessage(`Solo puedes seleccionar un máximo de 2 elementos para ${groupName}.`, true);
             event.target.checked = false; // Desmarcar el último
@@ -136,21 +152,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // Aplicar validación a ambos grupos
-    const attackCheckboxes = document.querySelectorAll('input[name="attacks"]');
-    const defenseCheckboxes = document.querySelectorAll('input[name="defenses"]');
-    attackCheckboxes.forEach(cb => cb.addEventListener('change', validateSelection));
-    defenseCheckboxes.forEach(cb => cb.addEventListener('change', validateSelection));
-    cancelButton.addEventListener('click', hideCreationForm);
+    // Función para asignar listeners (llamada después de renderElementSelections)
+    const attachSelectionListeners = () => {
+        document.querySelectorAll('input[name="attacks"]').forEach(cb => cb.addEventListener('change', validateSelection));
+        document.querySelectorAll('input[name="defenses"]').forEach(cb => cb.addEventListener('change', validateSelection));
+        cancelButton.addEventListener('click', hideCreationForm);
+    };
 
-    // Manejar el envío del formulario
+    // Manejar el envío del formulario (Seguro)
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         messageBox.classList.remove('visible');
 
         const name = document.getElementById('name').value.trim();
-        const selectedAttacks = Array.from(attackCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
-        const selectedDefenses = Array.from(defenseCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+        
+        // Obtener los checkboxes de nuevo (ya que se renderizan dinámicamente)
+        const currentAttackCheckboxes = document.querySelectorAll('input[name="attacks"]');
+        const currentDefenseCheckboxes = document.querySelectorAll('input[name="defenses"]');
+        
+        const selectedAttacks = Array.from(currentAttackCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+        const selectedDefenses = Array.from(currentDefenseCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
 
         // 1. Validación de nombre
         if (name.length === 0 || name.length > 20) {
@@ -164,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 3. Preparar datos (usando playerAtk/playerDef para el backend)
+        // 3. Preparar datos (SIN userId, el Backend lo inyecta)
         const characterData = {
             name: name,
             hp: 10, 
@@ -173,8 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            // 4. Enviar datos al Backend
-            const response = await fetch('http://localhost:3000/api/characters', {
+            // 4. Enviar datos al Backend (POST seguro)
+            const response = await fetch('/api/characters', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -185,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const result = await response.json();
                 alert(`¡Personaje ${result.name} creado con éxito!`);
-                hideCreationForm(); // Ocultar el formulario
+                hideCreationForm(); 
                 fetchCharacters();  // Recargar la lista de slots
             } else {
                 const errorData = await response.json();
@@ -194,11 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } catch (error) {
-            console.error('Error de conexión:', error);
-            displayMessage('Error de conexión con el servidor. Asegúrate de que node server.js esté corriendo.', true);
+            displayMessage('Error de conexión con el servidor.', true);
         }
     });
 
-    // --- 3. INICIO ---
-    fetchCharacters();
+    // --- 6. INICIO DE LA APLICACIÓN ---
+    renderElementSelections();
+    fetchCharacters(); 
 });

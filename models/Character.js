@@ -8,19 +8,24 @@ function arrayLimit(val) {
 }
 
 const CharacterSchema = new mongoose.Schema({
+    // 🚨 CAMBIO CLAVE: Referencia al usuario propietario
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User' // Referencia al modelo User
+    },
+    
     name: {
         type: String,
         required: true,
         trim: true,
         maxlength: [20, 'El nombre no puede exceder los 20 caracteres.']
     },
-    // 🚨 VALIDACIÓN ACTUALIZADA: Requiere 2 elementos
     playerAtk: {
         type: [String], 
         required: true,
         validate: [arrayLimit, 'playerAtk debe contener exactamente 2 elementos'],
     },
-    // 🚨 VALIDACIÓN ACTUALIZADA: Requiere 2 elementos
     playerDef: {
         type: [String], 
         required: true,

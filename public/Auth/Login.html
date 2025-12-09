@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribal Game - Acceso</title>
+    <link rel="stylesheet" href="/Auth/Login.css"> 
+</head>
+<body>
+    
+    <div id="authArea" class="auth-container">
+        
+        <div id="authMessage" class="hidden"></div>
+
+        <div id="loginSection">
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <input type="text" id="loginUsername" placeholder="Nombre de usuario" required>
+                <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                <button type="submit" id="loginButton">Login</button>
+            </form>
+            <button id="googleLoginBtn">Login con Google (Próximamente)</button>
+            <a id="toggleAuth">¿No tienes cuenta? Regístrate aquí.</a>
+        </div>
+
+        <div id="registerSection" class="hidden">
+            <h2>Crear Cuenta</h2>
+            <form id="registerForm">
+                <input type="text" id="registerUsername" placeholder="Nombre de usuario" required>
+                <input type="password" id="registerPassword" placeholder="Contraseña (mín. 6 chars)" required>
+                <button type="submit" id="registerButton">Registrarse</button>
+            </form>
+            <a id="toggleAuthBack">¿Ya tienes cuenta? Inicia sesión.</a>
+        </div>
+    </div>
+
+
+    <script type="module" src="/Auth/Login.js"></script>
+    
+</body>
+</html>
