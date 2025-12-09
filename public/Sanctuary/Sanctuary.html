@@ -22,37 +22,37 @@
     <div id="gameArea">
         <div class="sanctuary-bg">
             <div id="sanctuaryContent">
-                <h2>Crea a tu Campeón</h2>
-                <form id="creationForm">
-                    
-                    <div class="input-group">
-                        <label for="name">Nombre del Personaje (máx. 20 caracteres):</label>
-                        <input type="text" id="name" name="name" maxlength="20" required>
+                <h2>Gestión de Personajes (Slots: 10)</h2>
+                
+                <div id="characterSlots">
                     </div>
 
-                    <input type="hidden" name="hp" value="10">
-                    <div id="messageBox" class="hidden"></div>
+                <div id="messageBox" class="hidden"></div>
+                
+                <hr>
 
-                    <h3>Selecciona 3 Ataques</h3>
-                    <div id="attackSelection" class="selection-grid">
-                        <label><input type="checkbox" name="attacks" value="Ataque Fuerte"> Ataque Fuerte</label>
-                        <label><input type="checkbox" name="attacks" value="Golpe Rápido"> Golpe Rápido</label>
-                        <label><input type="checkbox" name="attacks" value="Embestida"> Embestida</label>
-                        <label><input type="checkbox" name="attacks" value="Corte Cruzado"> Corte Cruzado</label>
-                        <label><input type="checkbox" name="attacks" value="Puñetazo Elemental"> Puñetazo Elemental</label>
-                    </div>
+                <div id="creationArea" class="hidden">
+                    <h3>Crear Nuevo Campeón</h3>
+                    <form id="creationForm">
+                        
+                        <div class="input-group">
+                            <label for="name">Nombre (máx. 20 caracteres):</label>
+                            <input type="text" id="name" name="name" maxlength="20" required>
+                        </div>
+                        
+                        <h4>Selecciona 2 Elementos de Ataque</h4>
+                        <div id="attackSelection" class="selection-grid">
+                            </div>
 
-                    <h3>Selecciona 3 Defensas</h3>
-                    <div id="defenseSelection" class="selection-grid">
-                        <label><input type="checkbox" name="defenses" value="Bloqueo Ligero"> Bloqueo Ligero</label>
-                        <label><input type="checkbox" name="defenses" value="Esquiva Ágil"> Esquiva Ágil</label>
-                        <label><input type="checkbox" name="defenses" value="Muro de Escudo"> Muro de Escudo</label>
-                        <label><input type="checkbox" name="defenses" value="Curación Menor"> Curación Menor</label>
-                        <label><input type="checkbox" name="defenses" value="Invocación de Barrera"> Invocación de Barrera</label>
-                    </div>
-                    
-                    <button type="submit">Comenzar Aventura</button>
-                </form>
+                        <h4>Selecciona 2 Elementos de Defensa</h4>
+                        <div id="defenseSelection" class="selection-grid">
+                            </div>
+                        
+                        <button type="submit">Comenzar Aventura</button>
+                        <button type="button" id="cancelCreation">Cancelar</button>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>
