@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
     username: {
         type: String,
         required: [true, 'El nombre de usuario es obligatorio.'],
-        unique: true, // El nombre de usuario debe ser único
+        unique: true, 
         trim: true,
         minlength: [3, 'El nombre de usuario debe tener al menos 3 caracteres.']
     },
@@ -18,7 +18,6 @@ const UserSchema = new mongoose.Schema({
     },
     googleId: {
         type: String,
-        // Este campo es opcional, solo se usa si se registran con Google
     },
     createdAt: {
         type: Date,
@@ -26,24 +25,26 @@ const UserSchema = new mongoose.Schema({
     },
 });
 
-// 🚨 PRE-SAVE HOOK: Hashear la contraseña antes de guardar
-UserSchema.pre('save', async function (next) {
+// 🚨 HOOK DE PRE-GUARDADO (ASÍNCRONO): Usa async/await, no llama a next()
+// Mongoose detecta la función sin 'next' y la espera automáticamente.
+UserSchema.pre('save', async function() {
     // Solo hasheamos si la contraseña ha sido modificada (o es nueva)
     if (!this.isModified('password')) {
-        return next();
+        return;
     }
+    
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
-        next();
     } catch (err) {
-        next(err);
+        // En un hook asíncrono, lanzar el error detiene el proceso de guardado.
+        throw new Error('Error al hashear la contraseña: ' + err.message);
     }
 });
 
-// 🚨 MÉTODO PARA COMPARAR CONTRASEÑAS
+
+// MÉTODO PARA COMPARAR CONTRASEÑAS (Se mantiene igual)
 UserSchema.methods.matchPassword = async function (enteredPassword) {
-    // Compara la contraseña ingresada con la contraseña hasheada en la BD
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
