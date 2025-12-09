@@ -228,13 +228,13 @@ router.post('/round', isAuthenticated, async (req, res) => {
         const playerWon = newOpponentHp <= 0 && newPlayerHp > 0;
         
         if (playerWon) {
-             finalMessage = '¡VICTORIA! El oponente ha sido derrotado.';
+             finalMessage = '¡VICTORIA! El oponente ha sido derrotado, jeje.';
         } else {
              finalMessage = '¡DERROTA! Has perdido el combate.';
         }
     }
     
-    // 7. Devolver el nuevo estado del juego al cliente
+    // 7. Devolver el nuevo estado del juego al cliente SUREN
     res.json({
         success: true,
         gameState: newGameState,
