@@ -1,364 +1,463 @@
 // public/Training/Training.js
 
-const MAX_HP = 10;
-let playerHP = MAX_HP; 
-let cpuHP = MAX_HP;
-let running = true;
+import { checkAuthAndRedirect } from '../js/authChecker.js'; 
 
-let playerName = "";
-let atkSelection = [];
-let defSelection = [];
-let selectedAttack = null; 
-let selectedDefense = null; 
-let currentCharacterId = null; // 💡 Nuevo: ID del personaje desde MongoDB
-
-// Definimos la URL base de nuestra API (Asegúrate que el puerto coincida con server.js)
-const API_BASE_URL = 'http://localhost:3000/api/characters';
-
-
-// Variables fijas del combate
-const cpuAtkOptions = ["Fuego", "Agua", "Tierra", "Electricidad", "Viento"];
-const cpuDefOptions = ["Escudo Fuego", "Escudo Agua", "Escudo Tierra", "Escudo Electricidad", "Escudo Viento"];
-const titleEl = document.getElementById("title");
-const logContent = document.getElementById("logContent");
-
-const beats = {
-    "Ataque Fuerte": "Bloqueo",
-    "Bloqueo": "Contraataque",
-    "Contraataque": "Ataque Fuerte"
-};
-
-const elementalStrengths = {
-    "Agua":         { weakTo: "Electricidad", strongAgainst: ["Fuego"] },
-    "Fuego":        { weakTo: "Agua", strongAgainst: ["Viento"] },
-    "Viento":       { weakTo: "Fuego", strongAgainst: ["Tierra"] },
-    "Tierra":       { weakTo: "Viento", strongAgainst: ["Electricidad"] },
-    "Electricidad": { weakTo: "Tierra", strongAgainst: ["Agua"] }
-};
-
-// --- UTILERIAS Y UI (Se mantienen igual) ---
-
-function getRandomElement(list) {
-    return list[Math.floor(Math.random() * list.length)];
-}
-
-function flash(id){
-    const el = document.getElementById(id);
-    el.style.transition="0.3s";
-    el.style.transform="scale(1.2)";
-    el.style.background="#8b1e23";
-    setTimeout(()=>{
-        el.style.transform="scale(1)";
-        el.style.background="#3f4b64";
-    },300);
-}
-
-function showEffect(icon){
-    const el = document.createElement("div");
-    el.className = "attackEffect";
-    el.innerText = icon;
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),700);
-}
-
-function updateHPDisplay(idPrefix, currentHP) {
-    const fillEl = document.querySelector(`#${idPrefix}HPContainer .hp-bar-fill`);
-    const textEl = document.querySelector(`#${idPrefix}HPContainer .hp-text`);
+document.addEventListener('DOMContentLoaded', () => {
     
-    if (!fillEl || !textEl) return;
-
-    const percentage = (currentHP / MAX_HP) * 100;
+    // 1. Proteger la página
+    checkAuthAndRedirect();
     
-    fillEl.style.width = percentage + '%';
-    textEl.innerText = `${currentHP}/${MAX_HP}`;
-
-    if (percentage > 50) {
-        fillEl.style.backgroundColor = '#4CAF50';
-    } else if (percentage > 20) {
-        fillEl.style.backgroundColor = '#FFC107';
-    } else {
-        fillEl.style.backgroundColor = '#F44336';
-    }
-}
-
-function getElementalEffectText(mod) {
-    if (mod > 0) return '<span class="super-effective elemental-effect">¡Super Efectivo!</span>';
-    if (mod < 0) return '<span class="not-effective elemental-effect">No Efectivo.</span>';
-    return '<span class="normal-effective elemental-effect">Daño normal.</span>';
-}
-
-function logTurn(action, atkChoice, defChoice, cpuChoice, cpuAtk, cpuDef, result, pDmg, cDmg, pEff, cEff){
-    const div = document.createElement("div");
-    let cls = 'draw';
+    // --- ESTADO LOCAL ---
+    let currentCharacters = [];
+    let selectedCharacterId = null;
+    let selectedCharacter = null; 
+    let selectedAttack = null; 
+    let selectedDefense = null; 
+    let gameState = null; 
     
-    if (cDmg > 0 && pDmg == 0) cls = 'win';
-    else if (pDmg > 0 && cDmg == 0) cls = 'lose';
+    // --- ELEMENTOS DE LA UI ---
+    const characterListContainer = document.getElementById('characterList');
+    const elementSelectionArea = document.getElementById('elementSelectionArea');
+    const messageBox = document.getElementById('messageBox');
+    const selectedCharacterNameSpan = document.getElementById('selectedCharacterName');
     
-    div.className = `log-entry ${cls}`;
+    // Controles iniciales
+    const initialSelectionControls = document.getElementById('initialSelectionControls');
+    const availableAttackElementsDiv = document.getElementById('availableAttackElements');
+    const availableDefenseElementsDiv = document.getElementById('availableDefenseElements');
+    const startTrainingBtn = document.getElementById('startTrainingBtn');
+    const cancelSelectionBtn = document.getElementById('cancelSelectionBtn');
+
+    // Elementos de imagen y HP
+    const playerImage = document.getElementById('playerImage');
+    const opponentImage = document.getElementById('opponentImage');
+    const playerHpBar = document.getElementById('playerHpBar');
+    const opponentHpBar = document.getElementById('opponentHpBar');
+    const playerHpText = document.getElementById('playerHpText');
+    const opponentHpText = document.getElementById('opponentHpText');
     
-    let actionText = `
-        <strong>Turno:</strong> 
-        ${playerName}: ${action} (${atkChoice} / ${defChoice.replace('Escudo ', 'S-')}) | 
-        CPU: ${cpuChoice} (${cpuAtk} / ${cpuDef.replace('Escudo ', 'S-')})
-        <br>
-    `;
-
-    let damageDetails = '';
-    if (cDmg > 0) {
-        damageDetails += `<span class="win">${playerName} daña a CPU: -${cDmg} HP.</span> ${pEff || ''}`;
-    }
-    if (pDmg > 0) {
-        if (cDmg > 0) damageDetails += ' | ';
-        damageDetails += `<span class="lose">CPU daña a ${playerName}: -${pDmg} HP.</span> ${cEff || ''}`;
-    }
-
-    if (!damageDetails) {
-        damageDetails = 'Resultado: Empate sin daño. ' + result;
-    } else {
-        damageDetails = `Resultado: ${result}. ${damageDetails}`;
-    }
-
-    div.innerHTML = actionText + damageDetails;
-    logContent.prepend(div);
-    logContent.scrollTop = 0;
-}
-
-// --- LOGICA DE CARTAS Y ELEMENTOS (Se mantienen igual) ---
-
-function selectCard(clickedButton, elementValue, type) {
-    const allCardsOfType = document.querySelectorAll(`.${type}-card`);
-
-    allCardsOfType.forEach(btn => btn.classList.remove('selected'));
-    clickedButton.classList.add('selected');
-
-    if (type === 'attack') {
-        selectedAttack = elementValue;
-    } else {
-        selectedDefense = elementValue;
-    }
-}
-
-function calculateElementalMod(attackerElement, defenderShield) {
-    let modifier = 0;
+    // Controles de combate
+    const combatControls = document.getElementById('combatControls');
+    const roundNumberSpan = document.getElementById('roundNumber');
+    const moveButtons = document.querySelectorAll('.combat-move-buttons button');
     
-    if (!attackerElement) return 0;
-
-    const defenderElement = defenderShield.split(" ")[1] || defenderShield; 
-
-    if (attackerElement === defenderElement) {
-        return 0; 
-    }
+    // Elementos de selección por ronda
+    const roundAttackElementsDiv = document.getElementById('roundAttackElements');
+    const roundDefenseElementsDiv = document.getElementById('roundDefenseElements');
+    const roundSelectionControls = document.getElementById('roundSelectionControls');
+    const currentRoundAttackSpan = document.getElementById('currentRoundAttack');
+    const currentRoundDefenseSpan = document.getElementById('currentRoundDefense');
     
-    const atkData = elementalStrengths[attackerElement];
-    
-    if (atkData) {
-        if (atkData.strongAgainst.includes(defenderElement)) {
-            modifier += 1;
-        }
+    // Menú de fin de combate
+    const combatEndMenu = document.getElementById('combatEndMenu');
+    const combatEndTitle = document.getElementById('combatEndTitle');
+    const startNewCombatBtn = document.getElementById('startNewCombatBtn');
+    const repeatCombatBtn = document.getElementById('repeatCombatBtn');
+    const exitTrainingBtn = document.getElementById('exitTrainingBtn');
+
+    // Log de combate
+    const combatLogArea = document.getElementById('combatLogArea');
+    const combatLogDiv = document.getElementById('combatLog');
+
+
+    // --- UTILITIES ---
+    const BASE_HP = 100;
+    const displayMessage = (message, isError = true) => {
+        messageBox.textContent = message;
+        messageBox.classList.remove('hidden');
+        messageBox.style.backgroundColor = isError ? '#fbecec' : '#d4edda';
+        messageBox.style.color = isError ? '#c0392b' : '#155724';
+        messageBox.style.borderColor = isError ? '#c0392b' : '#155724';
+    };
+    const hideMessage = () => {
+        messageBox.classList.add('hidden');
+    };
+    const enableStartButton = () => {
+        startTrainingBtn.disabled = !(selectedAttack && selectedDefense);
+    };
+
+    const updateHpDisplay = (playerHp, opponentHp) => {
+        const playerHpPercent = (playerHp / BASE_HP) * 100;
+        const opponentHpPercent = (opponentHp / BASE_HP) * 100;
+
+        playerHpBar.style.width = `${Math.max(0, playerHpPercent)}%`;
+        playerHpText.textContent = `${Math.max(0, playerHp)} / ${BASE_HP}`;
         
-        if (atkData.weakTo === defenderElement) {
-            modifier -= 1;
-        }
-    }
-    
-    return modifier;
-}
+        opponentHpBar.style.width = `${Math.max(0, opponentHpPercent)}%`;
+        opponentHpText.textContent = `${Math.max(0, opponentHp)} / ${BASE_HP}`;
+    };
 
+    // Renderizar el historial de combate
+    const renderCombatLog = () => {
+        combatLogDiv.innerHTML = '';
+        gameState.log.slice().reverse().forEach(entry => { 
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'log-round-entry';
+            
+            entryDiv.innerHTML = `
+                <div class="log-round-header">Ronda ${entry.round}</div>
+                <div class="log-actions-container">
+                    
+                    <div class="log-move-box">
+                        <h5>${entry.playerMove}</h5>
+                        <div class="log-move-details">
+                            <span class="attack-element">ATK: ${entry.playerAtk}</span>
+                            <span class="defense-element">DEF: ${entry.playerDef}</span>
+                        </div>
+                    </div>
 
-// --- LÓGICA DE ACTUALIZACIÓN DE ESTADO DEL SERVIDOR ---
+                    <div class="log-move-box">
+                        <h5>${entry.opponentMove}</h5>
+                        <div class="log-move-details">
+                            <span class="attack-element">ATK: ${entry.opponentAtk}</span>
+                            <span class="defense-element">DEF: ${entry.opponentDef}</span>
+                        </div>
+                    </div>
 
-async function updateCharacterHP(newHP) {
-    if (!currentCharacterId) return;
-
-    try {
-        await fetch(`${API_BASE_URL}/${currentCharacterId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ hp: newHP }),
+                </div>
+                <div class="log-damage-result">
+                    ${entry.result}
+                    <br>
+                    Recibido: <strong>${entry.playerDamageTaken}</strong> | Infligido: <strong>${entry.opponentDamageTaken}</strong>
+                </div>
+            `;
+            combatLogDiv.appendChild(entryDiv);
         });
-        // No necesitamos la respuesta, solo confirmar que se guardó.
-        console.log(`HP (${newHP}) guardado en la DB.`);
-
-    } catch (error) {
-        console.error('Error al actualizar HP en la DB:', error);
-        alert('Advertencia: El HP no se pudo guardar en el servidor.');
-    }
-}
+        // Desplazar al inicio (última ronda)
+        combatLogDiv.scrollTop = 0;
+    };
 
 
-// --- LOGICA DE COMBATE PRINCIPAL ---
+    // --- 2. RENDERIZACIÓN DE PERSONAJES ---
+    const renderCharacterList = () => {
+        characterListContainer.innerHTML = ''; 
+        hideMessage();
 
-function cpuPickMove(){
-    const options = Object.keys(beats);
-    return options[Math.floor(Math.random()*3)];
-}
+        if (currentCharacters.length === 0) {
+            displayMessage('No tienes personajes disponibles para entrenar. Ve al Sanctuary para crear uno.', false);
+            return;
+        }
 
-function checkGameOver(){
-    if(playerHP<=0 || cpuHP<=0){
-        running=false;
-        if(playerHP>0 && cpuHP<=0) alert("¡Ganaste la partida!");
-        else if(cpuHP>0 && playerHP<=0) alert("¡Perdiste la partida!");
-        else alert("¡Doble KO! Empate final.");
+        currentCharacters.forEach(character => {
+            const card = document.createElement('div');
+            card.className = 'character-card';
+            if (character._id === selectedCharacterId) {
+                card.classList.add('selected');
+            }
+            card.setAttribute('data-id', character._id);
+            const atkElements = character.playerAtk.map(e => e.replace(' - ATK', '')).join(', ');
+            const defElements = character.playerDef.map(e => e.replace(' - DEF', '')).join(', ');
 
-        // 💡 Nuevo: Guardar el HP final en la base de datos al terminar el combate
-        updateCharacterHP(playerHP); 
-    }
-}
-
-export function play(action){
-    if(!running) return;
-
-    const pAtkChoice = selectedAttack;
-    const pDefChoice = selectedDefense;
+            card.innerHTML = `
+                <img src="/ImagenPersonaje.jpg" alt="${character.name}">
+                <div style="display: inline-block; vertical-align: top; margin-left: 10px;">
+                    <h4>${character.name}</h4>
+                    <p>HP: ${character.hp} / 100</p>
+                    <p>ATK: ${atkElements} | DEF: ${defElements}</p>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => handleCharacterSelection(character));
+            characterListContainer.appendChild(card);
+        });
+    };
     
-    if(!pAtkChoice || !pDefChoice){
-        alert("Debes seleccionar una carta de ataque y una de defensa para jugar.");
-        return;
-    }
+    // --- 3. CARGA DE PERSONAJES DESDE EL BACKEND ---
+    const fetchCharacters = async () => {
+        try {
+            const response = await fetch('/api/characters'); 
+            
+            if (response.ok) {
+                currentCharacters = await response.json();
+                renderCharacterList();
+            } else if (response.status === 401) {
+                window.location.href = '/Auth/Login.html';
+            } else {
+                displayMessage(`Error (${response.status}) al cargar los personajes.`, true);
+            }
+        } catch (error) {
+            console.error('Error de conexión:', error);
+            displayMessage('Error de conexión con el servidor. Verifica la URL o el estado del backend.', true); 
+        }
+    };
     
-    // ... (Lógica de CPU pick move, iconos, y daño - se mantiene igual)
-    const cpuChoice = cpuPickMove();
-    const cpuAtk = getRandomElement(cpuAtkOptions);
-    const cpuDef = getRandomElement(cpuDefOptions);
-
-    const icons = {"Ataque Fuerte":"💥","Contraataque":"🌀","Bloqueo":"🛡"};
-    showEffect(icons[action]);
-
-    let resultText = "";
-    let pDmg = 0;
-    let cDmg = 0;
-    let pElementalText = '';
-    let cElementalText = '';
-
-    // 1. Lógica de Daño
-    if(action===cpuChoice){
-        resultText = "Empate de movimiento";
+    // --- 4. SELECCIÓN DE PERSONAJE ---
+    const handleCharacterSelection = (character) => {
+        selectedAttack = null;
+        selectedDefense = null;
         
-        const pElementalMod = calculateElementalMod(pAtkChoice, cpuDef);
-        cDmg = Math.max(0, 1 + pElementalMod);
-        pElementalText = getElementalEffectText(pElementalMod);
-
-        const cpuElementalMod = calculateElementalMod(cpuAtk, pDefChoice); 
-        pDmg = Math.max(0, 1 + cpuElementalMod);
-        cElementalText = getElementalEffectText(cpuElementalMod);
-
-    } else if(beats[action]===cpuChoice){
-        resultText = `${playerName} gana el movimiento`;
+        selectedCharacterId = character._id;
+        selectedCharacter = character; 
+        selectedCharacterNameSpan.textContent = character.name;
         
-        const pElementalMod = calculateElementalMod(pAtkChoice, cpuDef);
-        cDmg = Math.max(0, 1 + pElementalMod);
-        pElementalText = getElementalEffectText(pElementalMod);
+        playerImage.src = '/ImagenPersonaje.jpg'; 
+        playerImage.classList.remove('hidden');
+        opponentImage.classList.remove('hidden'); 
+
+        updateHpDisplay(BASE_HP, BASE_HP); 
         
-        pDmg = 0;
+        renderElementSelections(character, availableAttackElementsDiv, 'trainingAttack', 'initial');
+        renderElementSelections(character, availableDefenseElementsDiv, 'trainingDefense', 'initial');
+        
+        elementSelectionArea.classList.remove('hidden');
+        initialSelectionControls.classList.remove('hidden'); 
+        combatControls.classList.add('hidden'); 
+        combatEndMenu.classList.add('hidden'); 
+        combatLogArea.classList.add('hidden'); 
+        roundSelectionControls.classList.add('hidden'); 
 
-    }else{
-        resultText = `CPU gana el movimiento`;
+        document.querySelectorAll('input[name="trainingAttack"]:checked').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="trainingDefense"]:checked').forEach(r => r.checked = false);
 
-        const cpuElementalMod = calculateElementalMod(cpuAtk, pDefChoice); 
-        pDmg = Math.max(0, 1 + cpuElementalMod);
-        cElementalText = getElementalEffectText(cpuElementalMod);
+        renderCharacterList(); 
+        enableStartButton();
+    };
 
-        cDmg = 0;
-    }
+    // --- 5. RENDERIZACIÓN DE ELEMENTOS ---
+    const renderElementSelections = (character, container, name, type, currentSelection = null) => {
+        container.innerHTML = '';
+        
+        const isAttack = name.includes('Attack');
+        const elements = isAttack ? character.playerAtk : character.playerDef;
+        const suffix = isAttack ? ' - ATK' : ' - DEF';
+
+        elements.forEach(element => {
+            const elementValue = element.replace(suffix, ''); 
+            const isChecked = elementValue === currentSelection;
+            const elementId = `${name}-${elementValue.replace(/\s/g, '_')}`; // ID único
+
+            // Generamos el input y el texto directamente dentro del label.
+            const label = document.createElement('label');
+            label.setAttribute('for', elementId);
+            
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = name;
+            input.value = elementValue;
+            input.id = elementId;
+            if (isChecked) {
+                input.checked = true;
+            }
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(elementValue)); // Texto del elemento
+            
+            container.appendChild(label);
+        });
+        
+        // Asignar listeners de cambio
+        document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+            radio.removeEventListener('change', handleElementChange);
+            radio.setAttribute('data-listener-type', type);
+            radio.addEventListener('change', handleElementChange);
+        });
+    };
     
-    // 2. Aplicar Daño
-    cpuHP -= cDmg;
-    playerHP -= pDmg;
+    // Función central para manejar los cambios de radio button
+    const handleElementChange = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        const type = e.target.getAttribute('data-listener-type');
+
+        if (name === 'trainingAttack') {
+            selectedAttack = value;
+        } else if (name === 'trainingDefense') {
+            selectedDefense = value;
+        } else if (name === 'roundAttack') {
+            gameState.playerAtk = value; 
+            currentRoundAttackSpan.textContent = value;
+        } else if (name === 'roundDefense') {
+            gameState.playerDef = value; 
+            currentRoundDefenseSpan.textContent = value;
+        }
+        
+        if (type === 'initial') {
+            enableStartButton();
+        }
+    };
     
-    if (cDmg > 0) flash("cpuChar");
-    if (pDmg > 0) flash("playerChar");
+    // --- 5.5 RENDERIZACIÓN DE ELEMENTOS POR RONDA ---
+    const renderRoundSelections = () => {
+        const currentAtk = gameState.playerAtk;
+        const currentDef = gameState.playerDef;
+        
+        renderElementSelections(selectedCharacter, roundAttackElementsDiv, 'roundAttack', 'round', currentAtk);
+        renderElementSelections(selectedCharacter, roundDefenseElementsDiv, 'roundDefense', 'round', currentDef);
+        
+        currentRoundAttackSpan.textContent = currentAtk;
+        currentRoundDefenseSpan.textContent = currentDef;
 
-    playerHP = Math.max(0, playerHP);
-    cpuHP = Math.max(0, cpuHP);
+        roundSelectionControls.classList.remove('hidden');
+    };
 
-    // 3. Actualizar UI y Log
-    updateHPDisplay('player', playerHP); 
-    updateHPDisplay('cpu', cpuHP); 
 
-    logTurn(action, pAtkChoice, pDefChoice, cpuChoice, cpuAtk, cpuDef, resultText, pDmg, cDmg, pElementalText, cElementalText);
-    
-    checkGameOver();
+    // --- 6. INICIO DE COMBATE ---
+    const startCombat = async (atkElement, defElement) => {
+        startTrainingBtn.disabled = true;
+        repeatCombatBtn.disabled = true;
+        displayMessage('Iniciando combate...', false);
+        
+        try {
+            const response = await fetch('/api/training/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    characterId: selectedCharacterId,
+                    attackElement: atkElement,
+                    defenseElement: defElement
+                })
+            });
 
-    // 💡 Nuevo: Guardar HP después de CADA turno, por si el usuario abandona
-    updateCharacterHP(playerHP);
-}
+            const data = await response.json();
+            
+            if (response.ok) {
+                gameState = data.initialState;
+                hideMessage();
+                
+                gameState.playerAtk = atkElement;
+                gameState.playerDef = defElement;
+                
+                initialSelectionControls.classList.add('hidden');
+                combatControls.classList.remove('hidden');
+                combatLogArea.classList.remove('hidden');
+                roundNumberSpan.textContent = gameState.round;
+                combatLogDiv.innerHTML = 'El historial de combate aparecerá aquí.';
+                
+                renderRoundSelections();
+                
+                updateHpDisplay(gameState.playerHp, gameState.opponentHp);
+                moveButtons.forEach(btn => btn.disabled = false); 
+                
+            } else {
+                displayMessage(`Error al iniciar: ${data.message}`, true);
+            }
 
-export function resetGame(){
-    if (!confirm("¿Estás seguro de que quieres volver a la Aldea? El HP actual será guardado.")) {
-        return;
-    }
-    
-    // El HP ya se guardó con updateCharacterHP(playerHP);
-    
-    // Redirige a la Aldea (Ruta corregida)
-    window.location.href = '../Village/Village.html';
-}
+        } catch (error) {
+            console.error('Error de red al iniciar combate:', error);
+            displayMessage('Error de conexión con el servidor al iniciar el combate.', true);
+        } finally {
+            startTrainingBtn.disabled = false;
+            repeatCombatBtn.disabled = false;
+        }
+    };
 
-// --- INICIALIZACIÓN DE LA PÁGINA (CARGA EL ESTADO DESDE LA API) ---
+    startTrainingBtn.addEventListener('click', () => {
+        if (selectedCharacterId && selectedAttack && selectedDefense) {
+            startCombat(selectedAttack, selectedDefense);
+        }
+    });
 
-async function initializeGame() {
-    // 1. Obtener el ID del personaje guardado en localStorage
-    currentCharacterId = localStorage.getItem('currentCharacterId');
-    
-    if (!currentCharacterId) {
-        alert("No se encontró un personaje. Vuelve a la Aldea y crea uno en el Sanctuary.");
+
+    // --- 7. RESOLVER RONDA ---
+    const handleMoveSelection = async (playerMove) => {
+        if (!gameState || gameState.playerHp <= 0 || gameState.opponentHp <= 0) return;
+        
+        if (!gameState.playerAtk || !gameState.playerDef) {
+            displayMessage('Por favor, selecciona elementos de Ataque y Defensa para la ronda.', true);
+            return;
+        }
+        
+        moveButtons.forEach(btn => btn.disabled = true); 
+        
+        let data; 
+
+        try {
+            const response = await fetch('/api/training/round', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    gameState: gameState, 
+                    playerMove: playerMove
+                })
+            });
+
+            data = await response.json(); 
+            
+            if (response.ok) {
+                gameState = data.gameState;
+                updateHpDisplay(gameState.playerHp, gameState.opponentHp);
+                renderCombatLog();
+                roundNumberSpan.textContent = gameState.round;
+                
+                if (data.combatFinished) {
+                    combatControls.classList.add('hidden');
+                    combatEndMenu.classList.remove('hidden');
+                    combatEndTitle.textContent = data.finalMessage;
+                    roundSelectionControls.classList.add('hidden');
+                    fetchCharacters(); 
+                } else {
+                    renderRoundSelections();
+                }
+                
+            } else {
+                displayMessage(`Error de ronda: ${data.message}`, true);
+            }
+
+        } catch (error) {
+            console.error('Error de red al resolver ronda:', error);
+            displayMessage('Error de conexión con el servidor al resolver la ronda.', true);
+        } finally {
+            if (!data || !data.combatFinished) {
+                moveButtons.forEach(btn => btn.disabled = false);
+            }
+        }
+    };
+
+    // Asignar listeners a los botones de movimiento
+    moveButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const move = e.target.getAttribute('data-move');
+            handleMoveSelection(move);
+        });
+    });
+
+
+    // --- 8. MANEJO DE BOTONES FINALES ---
+
+    repeatCombatBtn.addEventListener('click', () => {
+        if (selectedAttack && selectedDefense) {
+            combatEndMenu.classList.add('hidden');
+            startCombat(selectedAttack, selectedDefense); 
+        } else {
+            displayMessage('No se pudo encontrar la selección inicial para repetir el combate.', true);
+        }
+    });
+
+    exitTrainingBtn.addEventListener('click', () => {
         window.location.href = '../Village/Village.html';
-        return;
-    }
+    });
 
-    try {
-        // 2. Llamar a la API para obtener los datos del personaje por ID
-        const response = await fetch(`${API_BASE_URL}/${currentCharacterId}`);
+    startNewCombatBtn.addEventListener('click', () => {
+        selectedCharacterId = null;
+        selectedCharacter = null;
+        selectedAttack = null;
+        selectedDefense = null;
+        gameState = null;
         
-        if (!response.ok) {
-             throw new Error("Personaje no encontrado en la base de datos.");
-        }
+        elementSelectionArea.classList.add('hidden');
+        combatLogArea.classList.add('hidden');
+        combatEndMenu.classList.add('hidden');
         
-        const characterData = await response.json();
+        fetchCharacters();
+    });
 
-        // 3. Cargar datos del personaje
-        playerName = characterData.name;
-        atkSelection = characterData.playerAtk;
-        defSelection = characterData.playerDef;
-        playerHP = characterData.hp || MAX_HP; 
-        cpuHP = MAX_HP;
-        running = true;
-
-        // 4. Renderizar las cartas del jugador
-        titleEl.innerText = `¡${playerName} VS Máquina!`;
-        const attackArea = document.getElementById("attackCardArea");
-        const defenseArea = document.getElementById("defenseCardArea");
-        attackArea.innerHTML = "";
-        defenseArea.innerHTML = "";
-
-        atkSelection.forEach(element => {
-            const btn = document.createElement("button");
-            btn.innerText = element;
-            btn.className = "element-card attack-card";
-            btn.onclick = () => selectCard(btn, element, 'attack'); 
-            attackArea.appendChild(btn);
-        });
-
-        defSelection.forEach(element => {
-            const btn = document.createElement("button");
-            btn.innerText = element;
-            btn.className = "element-card defense-card";
-            btn.onclick = () => selectCard(btn, element, 'defense');
-            defenseArea.appendChild(btn);
-        });
+    // Cancelar Selección Inicial
+    cancelSelectionBtn.addEventListener('click', () => {
+        selectedCharacterId = null;
+        selectedCharacter = null;
+        selectedAttack = null;
+        selectedDefense = null;
+        gameState = null;
+        elementSelectionArea.classList.add('hidden');
         
-        // 5. Renderizar HP
-        updateHPDisplay('player', playerHP); 
-        updateHPDisplay('cpu', cpuHP); 
-        logContent.innerHTML = "";
+        playerImage.classList.add('hidden');
+        opponentImage.classList.add('hidden');
+        updateHpDisplay(BASE_HP, BASE_HP);
 
-    } catch (error) {
-        alert("Error al cargar el personaje: " + error.message);
-        console.error('Error de carga de personaje:', error);
-        window.location.href = '../Village/Village.html';
-    }
-}
+        renderCharacterList();
+        enableStartButton();
+    });
 
-document.addEventListener('DOMContentLoaded', initializeGame);
+    // --- 9. INICIO DE LA APLICACIÓN ---
+    fetchCharacters(); 
+});

@@ -1,110 +1,439 @@
-/* ------------------------------------------------------------------ */
-/* ESTILOS DE PANTALLA Y CONTENEDOR */
-/* ------------------------------------------------------------------ */
+/* public/Training/Training.css */
 
-/* Fondo específico para el combate (Ruta a la imagen: sale de Training/ y encuentra la imagen) */
-.game-bg {
-    background: url('../ImagenFondo.jpg') center center / cover no-repeat fixed;
+/* 1. Fondo de Batalla a Pantalla Completa */
+body.battle-background {
+    background-image: url('/ImagenBatalla.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; 
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    color: white; 
+    display: block; 
 }
-/* Recuadro oscuro para el área de combate */
-#gameArea {
+
+/* 3. Layout de 3 Columnas */
+#trainingLayout {
+    display: flex; 
+    padding-top: 20px;
+    min-height: calc(100vh - 80px); 
+    padding-left: 10px; 
+    padding-right: 10px; 
+    gap: 15px; 
+}
+
+/* 4. Panel Izquierdo (Lista de Personajes) */
+#leftPanel {
+    width: 250px;
     background: rgba(0, 0, 0, 0.7); 
     padding: 20px;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+    overflow-y: auto; 
+    height: calc(100vh - 100px); 
+    flex-shrink: 0; 
+}
+#leftPanel h2 {
+    color: #f39c12;
+    border-bottom: 2px solid #e67e22;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+#characterList {
+    display: block; 
+    gap: 0;
+}
+
+
+/* 5. Estilo de las Tarjetas de Personaje (Se mantiene) */
+.character-card {
+    background: none; 
+    border: none; 
+    padding: 10px 0;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: left;
+    margin-bottom: 5px;
+}
+.character-card:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: none;
+    box-shadow: none;
+}
+.character-card.selected {
+    border-left: 5px solid #2ecc71;
+    background-color: rgba(46, 204, 113, 0.3); 
+    padding-left: 15px;
+}
+.character-card img {
+    max-width: 50px;
+    max-height: 50px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.character-card h4 {
+    margin: 0;
+    display: inline;
+    color: white;
+}
+.character-card p {
+    font-size: 0.8em;
+    margin: 2px 0 0 60px; 
+    color: #bdc3c7;
+}
+
+
+/* 6. Contenido Principal (Centro) */
+#mainTrainingContent {
+    flex-grow: 1; 
+    padding: 0 10px;
+    color: white; 
+}
+#mainTrainingContent h1 {
+    color: #f39c12;
+    text-shadow: 2px 2px 4px black;
+    margin-top: 0;
+}
+.selection-panel {
+    background: rgba(0, 0, 0, 0.6); 
+    border: 1px solid #e67e22;
     border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
-/* El cuerpo usa los mismos estilos base de Village/Village.css (si no lo has incluido aquí) */
-body{
-    font-family:Arial,sans-serif; color:#fff; margin:0; display:flex;
-    justify-content:center; align-items:flex-start; padding-top:10vh;
-    min-height: 100vh; width: 100vw;
-}
-.container{
-    width:900px; max-width: 95%; text-align:center; border-radius: 10px; z-index: 10; position: relative;
-}
-
-/* ------------------------------------------------------------------ */
-/* ESTILOS DE BOTONES */
-/* ------------------------------------------------------------------ */
-
-button{
-    padding:10px 16px; margin:5px; border:none; border-radius:6px; cursor:pointer;
-    background: #3b82f6; color: white; font-weight: bold; transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-button:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6); }
-button[onclick="resetGame()"] { background: #4a5568; }
-button[onclick="resetGame()"]:hover { background: #2d3748; }
-
-
-/* ------------------------------------------------------------------ */
-/* ESTILOS DE PERSONAJES Y EFECTOS */
-/* ------------------------------------------------------------------ */
-
-.character, .cpu{
-    display:inline-block; width:150px; height:150px; background:#3f4b64; border-radius:50%;
-    margin:10px; position:relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5); overflow: hidden; 
-}
-.character img, .cpu img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-
-.attackEffect{
-    position:absolute; font-size:50px; animation:hit 0.7s ease; top:50%; left:50%;
-    transform:translate(-50%,-50%); z-index: 10;
-}
-@keyframes hit{
-    0%{transform:translate(-50%,-50%) scale(0.2); opacity:0;}
-    50%{transform:translate(-50%,-50%) scale(1.6); opacity:1;}
-    100%{transform:translate(-50%,-50%) scale(0.8); opacity:0;}
+.element-choice-instruction { 
+    color: white;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    font-weight: bold;
 }
 
-/* ------------------------------------------------------------------ */
-/* ESTILOS DE LA BARRA DE VIDA */
-/* ------------------------------------------------------------------ */
+/* 7. Estilos de la Vista Previa de Batalla (Se mantiene) */
+#battlePreview {
+    background: rgba(0, 0, 0, 0.4); 
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: 3px solid #e67e22;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    color: white; 
+    height: 250px; 
+    position: relative;
+}
 
+.character-display {
+    text-align: center;
+    padding: 10px;
+    width: 40%;
+}
+
+.character-display img {
+    max-width: 180px;
+    height: auto;
+    border: 3px solid #2ecc71; 
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5); 
+}
+
+/* BARRA DE VIDA */
 .hp-bar-container {
-    margin: 0 auto 5px; width: 120px; height: 18px; background: #000; border: 2px solid #fff;
-    border-radius: 4px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.7); z-index: 20; display: block; 
+    background-color: #333;
+    border: 1px solid white;
+    border-radius: 5px;
+    height: 25px; 
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
 }
-.hp-bar-fill {
-    height: 100%; width: 100%; background: #4CAF50; border-radius: 2px;
-    transition: width 0.5s ease-out, background-color 0.5s ease; position: relative;
+.hp-bar {
+    height: 100%;
+    background-color: #2ecc71; 
+    transition: width 0.5s ease-in-out;
 }
 .hp-text {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white;
-    font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px black; z-index: 21; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.9em; 
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px black;
+}
+/* -- */
+
+.vs-text {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #e74c3c; 
+    text-shadow: 2px 2px 4px black;
 }
 
-/* ------------------------------------------------------------------ */
-/* ESTILOS PARA LAS CARTAS DE SELECCIÓN Y LOG */
-/* ------------------------------------------------------------------ */
-
-.card-area {
-    margin: 20px auto 10px; background: #2d3748; padding: 15px; border-radius: 8px; text-align: center;
+/* ESTILOS DE CONTROLES INICIALES Y COMBATE (Se mantiene) */
+.selection-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    margin-bottom: 20px;
 }
-.element-card {
-    min-width: 100px; padding: 15px 10px; margin: 8px; background: #3f4b64; color: white;
-    border: 2px solid #4a5568; border-radius: 6px; font-weight: bold; cursor: pointer;
-    transition: background 0.2s, border 0.2s, transform 0.2s; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-}
-.element-card:hover { transform: translateY(-2px); background: #4a5568; }
-.element-card.selected {
-    background: #3b82f6; border-color: #ffffff; transform: scale(1.05); box-shadow: 0 6px 12px rgba(59, 130, 246, 0.8);
+.selection-group {
+    flex: 1;
+    min-width: 200px; 
+    padding: 10px;
+    border: 1px dashed #95a5a6;
+    border-radius: 5px;
 }
 
-.elemental-effect { font-size: 11px; font-weight: bold; }
-.super-effective { color: #84cc16; }
-.not-effective { color: #f87171; }
-.normal-effective { color: #94a3b8; }
-
-#battleLog{
-    margin-top:20px; text-align:left; max-height:200px; overflow-y:auto; background:#222;
-    padding:10px; border-radius:6px; width:90%; margin: 20px auto 0; font-size: 14px;
+/* ESTILOS DE SELECCIÓN DE ELEMENTOS */
+.element-options label {
+    display: block;
+    margin: 5px 0;
+    cursor: pointer;
+    background-color: #fff;
+    padding: 8px 10px; 
+    border-radius: 3px;
+    border: 2px solid #bdc3c7; 
+    transition: background-color 0.15s, border-color 0.15s;
+    color: #34495e;
+    text-align: center; 
+    font-weight: bold;
 }
-.log-entry.win { color: #84cc16; }
-.log-entry.lose { color: #f87171; }
-.log-entry.draw { color: #94a3b8; }
-.log-entry strong { color: white; }
+.element-options input[type="radio"] {
+    position: absolute; 
+    opacity: 0; 
+    width: 0;
+    height: 0;
+}
+.element-options label:has(input[type="radio"]:checked) {
+    background-color: #2ecc71; 
+    border-color: #27ae60;
+    color: white; 
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.8);
+}
+.element-options label:hover {
+    background-color: #ecf0f1;
+    border-color: #2980b9;
+    color: #34495e;
+}
+.element-options label:has(input[type="radio"]:checked):hover {
+    background-color: #27ae60; 
+}
 
-/* Media Query: Ajuste básico para pantallas más pequeñas */
-@media (max-width: 768px) {
-    .character, .cpu { width: 100px; height: 100px; }
+
+/* 🚨 ESTILOS DE BOTONES INICIALES (Modificados) */
+#initialSelectionControls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#initialSelectionControls button {
+    margin: 5px 8px; 
+    padding: 10px 20px; 
+    font-size: 1.05em; 
+    min-width: 200px; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#startTrainingBtn {
+    background-color: #2ecc71; /* Verde para iniciar/aceptar */
+}
+#startTrainingBtn:hover:not(:disabled) {
+    background-color: #27ae60;
+}
+#startTrainingBtn:disabled {
+    background-color: #7f8c8d; /* Gris para deshabilitado */
+    cursor: not-allowed;
+}
+
+#cancelSelectionBtn {
+    background-color: #e67e22; /* Naranja/Ámbar para cancelar */
+}
+#cancelSelectionBtn:hover {
+    background-color: #d35400;
+}
+/* ------------------------------------------- */
+
+
+/* SECCIÓN DE MOVIMIENTO */
+.combat-move-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+.combat-move-buttons button {
+    background-color: #3498db;
+    color: white;
+    padding: 15px 30px; 
+    font-size: 1.2em; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.combat-move-buttons button:hover:not(:disabled) {
+    background-color: #2980b9;
+}
+
+/* ESTILOS DE MENÚ FINAL */
+#combatEndMenu {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    border: 2px solid #2ecc71;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.8);
+}
+#combatEndMenu button {
+    margin: 5px 8px; 
+    padding: 10px 20px; 
+    font-size: 1.05em; 
+    min-width: 200px; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    background-color: #3498db; 
+}
+#combatEndMenu button:hover {
+    background-color: #2980b9;
+}
+
+#combatEndTitle {
+    color: #2ecc71;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+#exitTrainingBtn {
+    background-color: #e74c3c; /* Usar rojo para "Salir" */
+}
+#exitTrainingBtn:hover {
+    background-color: #c0392b;
+}
+
+
+/* 4. Panel Derecho (Historial) */
+#rightPanel {
+    width: 380px; 
+    flex-shrink: 0;
+    padding: 0;
+    height: calc(100vh - 100px); 
+    overflow-y: hidden; 
+}
+
+#combatLogArea {
+    background: rgba(0, 0, 0, 0.7); 
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #e67e22;
+    height: 100%;
+    box-sizing: border-box; 
+}
+#combatLogArea h2 {
+    color: #f39c12;
+    border-bottom: 2px solid #e67e22;
+    padding-bottom: 5px;
+    margin-top: 0;
+}
+
+/* Contenedor del scroll del historial */
+.log-output {
+    max-height: calc(100% - 40px); 
+    overflow-y: auto;
+    padding: 5px; 
+    margin: 0; 
+}
+
+
+/* --- ESTILOS DEL REGISTRO POR RONDA (Se mantienen) --- */
+.log-round-entry {
+    background: rgba(44, 62, 80, 0.8); 
+    border: 1px solid #34495e;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box; 
+}
+
+.log-round-header {
+    font-weight: bold;
+    color: #f1c40f; 
+    margin-bottom: 8px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.log-actions-container {
+    display: flex;
+    justify-content: space-between; 
+    gap: 8px; 
+    margin-bottom: 10px;
+}
+
+.log-move-box {
+    flex: 1; 
+    text-align: center;
+    padding: 8px;
+    border: 2px solid #95a5a6;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.3); 
+    min-width: 100px; 
+}
+
+.log-move-box h5 {
+    margin: 0 0 5px 0;
+    font-size: 0.9em;
+    color: #3498db; 
+    border-bottom: 1px dashed #666;
+    padding-bottom: 3px;
+}
+
+.log-move-details {
+    display: flex;
+    justify-content: space-around; 
+    font-size: 0.75em;
+    margin-top: 5px;
+    gap: 5px;
+}
+.log-move-details span {
+    display: block;
+    padding: 2px 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+.log-move-details .attack-element {
+    color: #e74c3c; 
+}
+.log-move-details .defense-element {
+    color: #2ecc71; 
+}
+
+.log-damage-result {
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    padding-top: 5px;
+    border-top: 1px solid #444;
+    color: #bdc3c7;
+}
+
+.log-damage-result strong {
+    color: #e74c3c;
+}
+
+/* Otros estilos */
+.hidden {
+    display: none !important;
 }

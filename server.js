@@ -11,6 +11,7 @@ const passport = require('passport');
 const app = express();
 const authRoutes = require('./routes/authRoutes'); 
 const characterRoutes = require('./routes/characterRoutes'); 
+const trainingRoutes = require('./routes/trainingRoutes');
 
 // 1. Conectar a MongoDB Atlas
 connectDB();
@@ -37,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 6. Configurar las rutas de la API
 app.use('/api/auth', authRoutes); 
 app.use('/api/characters', characterRoutes);
-
+app.use('/api/training', trainingRoutes);
 
 // 7. Configurar la página de inicio (ruta /)
 app.get('/', (req, res) => {

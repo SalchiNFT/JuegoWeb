@@ -2,64 +2,120 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Zona de Entrenamiento - Combate</title>
-    <link rel="stylesheet" href="Training.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribal Game - Campo de Entrenamiento</title>
+    <link rel="stylesheet" href="/css/global.css"> 
+    <link rel="stylesheet" href="/Training/Training.css"> 
 </head>
-<body class="game-bg">
-    <div class="container" id="gameArea">
-        <h2 id="title">¡Cargando Combate!</h2>
-        <div style="display: flex; justify-content: center; align-items: center;">
-            
-            <div id="player-group" style="text-align: center; margin: 0 20px;">
-                <div class="hp-bar-container" id="playerHPContainer">
-                    <div class="hp-bar-fill"><div class="hp-text">10/10</div></div>
-                </div>
-                <div class="character" id="playerChar">
-                    <img src="../ImagenPersonaje.jpg" alt="Tu Personaje">
-                </div>
-            </div>
-
-            <h3 style="margin: 0 20px;">VS</h3>
-            
-            <div id="cpu-group" style="text-align: center; margin: 0 20px;">
-                <div class="hp-bar-container" id="cpuHPContainer">
-                    <div class="hp-bar-fill"><div class="hp-text">10/10</div></div>
-                </div>
-                <div class="character cpu" id="cpuChar">
-                    <img src="../ImagenContrincante.jpg" alt="Contrincante">
-                </div>
-            </div>
-        </div>
-
-        <div style="margin-top:20px;">
-            
-            <div class="card-area">
-                <p style="font-weight: bold; margin: 0 0 10px;">Selecciona Ataque (Elemento)</p>
-                <div id="attackCardArea">
-                    </div>
-            </div>
-
-            <div class="card-area">
-                <p style="font-weight: bold; margin: 0 0 10px;">Selecciona Defensa (Escudo)</p>
-                <div id="defenseCardArea">
-                    </div>
-            </div>
-            
-            <div style="margin-top:20px;">
-                <button onclick="play('Ataque Fuerte')">💥 Ataque Fuerte</button>
-                <button onclick="play('Contraataque')">🌀 Contraataque</button>
-                <button onclick="play('Bloqueo')">🛡 Bloqueo</button>
-            </div>
-            <button onclick="resetGame()" style="margin-top: 10px;">🔄 Volver a la Aldea</button>
-        </div>
-
-        <div id="battleLog">
-            <h3>Registro de batalla:</h3>
-            <div id="logContent"></div>
-        </div>
-
+<body class="battle-background"> 
+    
+    <div id="gameHeader">
+        <button class="header-button" onclick="window.location.href='../Village/Village.html'">
+            ⬅️ Volver a Village
+        </button>
     </div>
 
-    <script src="Training.js"></script>
+    <div id="trainingLayout">
+        
+        <div id="leftPanel">
+            <h2>Tus Guerreros</h2>
+            <div id="characterList">
+                <p>Cargando personajes...</p>
+            </div>
+        </div>
+
+        <div id="mainTrainingContent">
+            <h1>Campo de Entrenamiento</h1>
+            <div id="messageBox" class="hidden"></div>
+
+            <div id="elementSelectionArea" class="hidden selection-panel">
+                <h3>Preparación de Batalla: <span id="selectedCharacterName"></span></h3>
+                
+                <div id="battlePreview" class="battle-preview">
+                    
+                    <div class="character-display">
+                        <div class="hp-bar-container">
+                            <div id="playerHpBar" class="hp-bar" style="width: 100%;"></div>
+                            <span id="playerHpText" class="hp-text">100 / 100</span>
+                        </div>
+                        <img id="playerImage" src="" alt="Tu Personaje" class="hidden">
+                    </div>
+
+                    <div class="vs-text">VS</div>
+                    
+                    <div class="character-display">
+                        <div class="hp-bar-container">
+                            <div id="opponentHpBar" class="hp-bar" style="width: 100%;"></div>
+                            <span id="opponentHpText" class="hp-text">100 / 100</span>
+                        </div>
+                        <img id="opponentImage" src="/ImagenContrincante.jpg" alt="Contrincante" class="hidden">
+                    </div>
+                </div>
+                <div id="initialSelectionControls">
+                    <p class="element-choice-instruction">Elige **un** elemento de ataque y **uno** de defensa para este combate:</p>
+
+                    <div class="selection-row">
+                        <div class="selection-group">
+                            <h4>Elementos de Ataque disponibles:</h4>
+                            <div id="availableAttackElements" class="element-options"></div>
+                        </div>
+                        
+                        <div class="selection-group">
+                            <h4>Elementos de Defensa disponibles:</h4>
+                            <div id="availableDefenseElements" class="element-options"></div>
+                        </div>
+                    </div>
+
+                    <button id="startTrainingBtn" disabled>Iniciar Combate</button>
+                    <button id="cancelSelectionBtn">Cancelar Selección</button>
+                </div>
+
+                <div id="combatControls" class="hidden">
+                    <div id="roundSelectionControls" style="margin-top: 10px; margin-bottom: 20px;">
+                        <p class="element-choice-instruction">Selección de Elementos para esta Ronda:</p>
+                        <div class="selection-row">
+                            <div class="selection-group">
+                                <h4>Ataque (Actual: <span id="currentRoundAttack"></span>):</h4>
+                                <div id="roundAttackElements" class="element-options"></div>
+                            </div>
+                            
+                            <div class="selection-group">
+                                <h4>Defensa (Actual: <span id="currentRoundDefense"></span>):</h4>
+                                <div id="roundDefenseElements" class="element-options"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Elige tu Movimiento (Ronda <span id="roundNumber">0</span>)</h4>
+                    <div class="combat-move-buttons">
+                        <button id="moveAttack" data-move="Ataque fuerte">Ataque fuerte (⚔️)</button>
+                        <button id="moveBlock" data-move="Bloqueo">Bloqueo (🛡️)</button>
+                        <button id="moveCounter" data-move="Contraataque">Contraataque (🔄)</button>
+                    </div>
+                </div>
+
+                <div id="combatEndMenu" class="hidden">
+                    <h4 id="combatEndTitle">¡Combate Terminado!</h4>
+                    <button id="startNewCombatBtn">Comenzar un nuevo combate</button>
+                    <button id="repeatCombatBtn">Repetir combate</button>
+                    <button id="exitTrainingBtn">Salir de entrenamiento</button>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div id="rightPanel">
+            <div id="combatLogArea" class="hidden">
+                <h2>Historial</h2>
+                <div id="combatLog" class="log-output">
+                    <p>El historial aparecerá aquí...</p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script type="module" src="/js/authChecker.js"></script>
+    <script type="module" src="/Training/Training.js"></script>
 </body>
 </html>
