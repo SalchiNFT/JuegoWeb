@@ -1,0 +1,111 @@
+/* ================================================= */
+/* public/Sanctuary/Sanctuary.css */
+/* ================================================= */
+
+/* --- ESTILOS BASE --- */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    background-color: #2c3e50; 
+}
+
+/* Header y Navegación */
+#gameHeader {
+    width: 100%; background-color: #34495e; padding: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); display: flex;
+    justify-content: center; position: sticky; top: 0; z-index: 1000;
+}
+#gameHeader button {
+    background-color: #e67e22; color: white; border: none;
+    padding: 10px 20px; margin: 0 5px; border-radius: 5px;
+    cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.1s;
+}
+#gameHeader button:hover {
+    background-color: #d35400; transform: translateY(-2px);
+}
+
+/* Estilos de la zona de juego */
+#gameArea {
+    width: 90%; max-width: 1200px; flex-grow: 1; margin: 20px 0;
+    padding: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    background-color: #2c3e50; border-radius: 8px; overflow: hidden;
+}
+
+/* --- ESTILOS ESPECÍFICOS DEL SANCTUARY --- */
+
+.sanctuary-bg {
+    /* RUTA DEL FONDO DEL SANTUARIO */
+    background-image: url('/ImagenCreacion.jpg'); 
+    background-size: cover; background-position: center;
+    min-height: 70vh; width: 100%; border-radius: 5px;
+    position: relative; padding: 20px; display: flex;
+    justify-content: center; align-items: center;
+}
+
+#sanctuaryContent {
+    background-color: rgba(0, 0, 0, 0.85); 
+    color: white; padding: 30px; border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8); width: 90%;
+    max-width: 500px; text-align: center;
+}
+
+#sanctuaryContent h2, h3 {
+    color: #f39c12; margin-bottom: 15px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block; margin-bottom: 5px; font-weight: bold;
+}
+
+.input-group input[type="text"] {
+    width: 80%; padding: 10px; border: 1px solid #e67e22;
+    border-radius: 5px; background-color: #34495e; color: white;
+}
+
+#messageBox {
+    padding: 10px; margin-bottom: 15px; border-radius: 5px;
+    color: #c0392b; background-color: #fbecec; border: 1px solid #c0392b;
+    font-weight: bold; display: none; /* Oculto por defecto */
+}
+#messageBox.visible { display: block; }
+
+/* SELECCIÓN DE HABILIDADES */
+.selection-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 25px; text-align: left; padding: 0 20px;
+}
+
+.selection-grid label {
+    cursor: pointer; background-color: #5d6d7e; padding: 8px;
+    border-radius: 5px; transition: background-color 0.2s;
+}
+
+.selection-grid label:has(input:checked) {
+    background-color: #27ae60; font-weight: bold;
+}
+
+.selection-grid input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Botón de Enviar Formulario */
+#creationForm button[type="submit"] {
+    background-color: #c0392b; color: white; border: none;
+    padding: 15px 30px; border-radius: 5px; cursor: pointer;
+    font-size: 18px; font-weight: bold; margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+#creationForm button[type="submit"]:hover {
+    background-color: #e74c3c;
+}

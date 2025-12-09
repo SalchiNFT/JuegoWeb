@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santuario</title>
+    
+    <link rel="stylesheet" href="/Sanctuary/Sanctuary.css"> 
+    
+</head>
+<body>
+    
+    <div id="gameHeader">
+        <button onclick="window.location.href='../Village/Village.html'">VILLAGE 🏡</button>
+        <button onclick="window.location.href='../Training/Training.html'">TRAINING ⚔️</button>
+        <button onclick="window.location.href='../Workshop/Workshop.html'">WORKSHOP 🔨</button>
+        <button onclick="window.location.href='../Laboratory/Laboratory.html'">LABORATORY 🧪</button>
+        <button onclick="window.location.href='../Expeditions/Expeditions.html'">EXPEDITIONS 🗺️</button>
+        <button onclick="window.location.href='./Sanctuary.html'">SANCTUARY ✨</button>
+    </div>
+    
+    <div id="gameArea">
+        <div class="sanctuary-bg">
+            <div id="sanctuaryContent">
+                <h2>Crea a tu Campeón</h2>
+                <form id="creationForm">
+                    
+                    <div class="input-group">
+                        <label for="name">Nombre del Personaje (máx. 20 caracteres):</label>
+                        <input type="text" id="name" name="name" maxlength="20" required>
+                    </div>
+
+                    <input type="hidden" name="hp" value="10">
+                    <div id="messageBox" class="hidden"></div>
+
+                    <h3>Selecciona 3 Ataques</h3>
+                    <div id="attackSelection" class="selection-grid">
+                        <label><input type="checkbox" name="attacks" value="Ataque Fuerte"> Ataque Fuerte</label>
+                        <label><input type="checkbox" name="attacks" value="Golpe Rápido"> Golpe Rápido</label>
+                        <label><input type="checkbox" name="attacks" value="Embestida"> Embestida</label>
+                        <label><input type="checkbox" name="attacks" value="Corte Cruzado"> Corte Cruzado</label>
+                        <label><input type="checkbox" name="attacks" value="Puñetazo Elemental"> Puñetazo Elemental</label>
+                    </div>
+
+                    <h3>Selecciona 3 Defensas</h3>
+                    <div id="defenseSelection" class="selection-grid">
+                        <label><input type="checkbox" name="defenses" value="Bloqueo Ligero"> Bloqueo Ligero</label>
+                        <label><input type="checkbox" name="defenses" value="Esquiva Ágil"> Esquiva Ágil</label>
+                        <label><input type="checkbox" name="defenses" value="Muro de Escudo"> Muro de Escudo</label>
+                        <label><input type="checkbox" name="defenses" value="Curación Menor"> Curación Menor</label>
+                        <label><input type="checkbox" name="defenses" value="Invocación de Barrera"> Invocación de Barrera</label>
+                    </div>
+                    
+                    <button type="submit">Comenzar Aventura</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/Sanctuary/Sanctuary.js"></script>
+    
+</body>
+</html>
