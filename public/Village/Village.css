@@ -60,16 +60,17 @@ body {
 
 /* --- 4. FONDO DE LA ALDEA (AJUSTE A LA RESOLUCIÓN) --- */
 .village-bg {
-    background-image: url('/ImagenAldea.jpg');
-    /* 🚨 AJUSTE DE RESOLUCIÓN */
-    background-size: contain; /* Asegura que toda la imagen se vea, respetando las proporciones */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
-    background-position: center; /* Centra la imagen en el espacio disponible */
-    
-    height: 100vh; /* Ocupa el 100% de la altura de la ventana */
-    width: 100%;
+    background-image: url('/ImagenAldea.png');
+
+    background-size: 100% 100%;   /* 🔥 ESTIRA EN AMBAS DIRECCIONES */
+    background-repeat: no-repeat;
+    background-position: center;
+
+    width: 100vw;
+    height: calc(100vh - 60px);
     position: relative;
 }
+
 
 /* 🚨 ELIMINAMOS #welcomeBox CSS */
 
