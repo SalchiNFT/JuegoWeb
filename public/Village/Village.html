@@ -1,48 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aldea Tribal</title>
-    
-    <link rel="stylesheet" href="/Village/Village.css">
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aldea Tribal</title>
+    
+        <link rel="stylesheet" href="./Village.css"> 
+    
 </head>
 <body>
-    
-    <div id="gameHeader">
-    <button onclick="window.location.href='./Village.html'">VILLAGE 🏡</button>
-    <button onclick="window.location.href='../Training/Training.html'">TRAINING ⚔️</button>
-    <button onclick="window.location.href='../Sanctuary/Sanctuary.html'">SANCTUARY ✨</button>
-    <button id="logoutBtn" style="background-color: #c0392b;">LOGOUT</button>
-    </div>
-    
-    <div id="gameArea">
-        <div class="village-bg">
-            <div id="villageContent">
-                
-                <div class="village-area" id="workshopArea" onclick="window.location.href='../Workshop/Workshop.html'">
-                    WORKSHOP
-                </div>
-                <div class="village-area" id="sanctuaryArea" onclick="window.location.href='../Sanctuary/Sanctuary.html'">
-                    SANCTUARY
-                </div>
-                <div class="village-area" id="trainingArea" onclick="window.location.href='../Training/Training.html'">
-                    TRAINING
-                </div>
-                <div class="village-area" id="expeditionsArea" onclick="window.location.href='../Expeditions/Expeditions.html'">
-                    EXPEDITIONS
-                </div>
-                
-                <div class="village-area" id="hutArea" onclick="window.location.href='../Hut/Hut.html'">
-                    HUT
-                </div>
+    
+    <div id="gameHeader">
+    <button onclick="window.location.href='./Village.html'">VILLAGE 🏡</button>
+    <button onclick="window.location.href='../Training/Training.html'">TRAINING ⚔️</button>
+    <button onclick="window.location.href='../Sanctuary/Sanctuary.html'">SANCTUARY ✨</button>
+    <button id="logoutBtn" style="background-color: #c0392b;">LOGOUT</button>
+    </div>
+    
+    <div id="gameArea">
+        <div class="village-bg">
+            <div id="villageContent">
+                
+                <div class="village-area" id="workshopArea" onclick="window.location.href='../Workshop/Workshop.html'">
+                    WORKSHOP
+                </div>
+                <div class="village-area" id="sanctuaryArea" onclick="window.location.href='../Sanctuary/Sanctuary.html'">
+                    SANCTUARY
+                </div>
+                <div class="village-area" id="trainingArea" onclick="window.location.href='../Training/Training.html'">
+                    TRAINING
+                </div>
+                <div class="village-area" id="expeditionsArea" onclick="window.location.href='../Expeditions/Expeditions.html'">
+                    EXPEDITIONS
+                </div>
+                
+                <div class="village-area" id="hutArea" onclick="window.location.href='../Hut/Hut.html'">
+                    HUT
+                </div>
 
-            </div>
-        </div>
+                <div class="village-area" id="depotArea" onclick="window.location.href='../Depot/Depot.html'">
+                    DEPÓSITO
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="resourceDisplay">
+        <p style="margin: 0;">Cargando recursos...</p>
     </div>
 
-    <script type="module" src="/Village/Village.js"></script>
-    
+    <script type="module" src="/Village/Village.js"></script>
+    
 </body>
 </html>
