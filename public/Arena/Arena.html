@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribal Game - Arena de Combate</title> <link rel="stylesheet" href="/css/global.css"> 
+    <link rel="stylesheet" href="./Arena.css"> </head>
+<body class="battle-background"> 
+    
+    <div id="gameHeader">
+    <button onclick="window.location.href='../Village/Village.html'">VILLAGE 🏡</button>
+    <button onclick="window.location.href='../Workshop/Workshop.html'">WORKSHOP ⚒️</button>
+    <button onclick="window.location.href='../Training/Training.html'">TRAINING 🏋️</button>
+    <button onclick="window.location.href='../Expeditions/Expeditions.html'">EXPEDITIONS 🗺️</button>
+    <button onclick="window.location.href='../Hut/Hut.html'">HUT 🛖</button>
+    <button onclick="window.location.href='../Depot/Depot.html'">DEPÓSITO 📦</button>
+    <button onclick="window.location.href='../Laboratory/Laboratory.html'">LABORATORY 🧪</button>
+    <button onclick="window.location.href='../Fields/Fields.html'">FIELDS 🌾</button>
+    <button onclick="window.location.href='../Clan/Clan.html'">CLAN 🛡️</button>
+
+    <span class="nav-item selected">ARENA ⚔️</span>
+    <button onclick="window.location.href='../Sanctuary/Sanctuary.html'">SANCTUARY ✨</button>
+    <button id="logoutBtn" style="background-color: #c0392b;">LOGOUT</button>
+    </div>
+    <div id="arenaLayout"> <div id="leftPanel">
+            <h2>Tus Guerreros</h2>
+            <div id="characterList">
+                <p>Cargando personajes...</p>
+            </div>
+        </div>
+
+        <div id="mainArenaContent"> <h1>Arena de Combate</h1> <div id="messageBox" class="hidden"></div>
+
+            <div id="elementSelectionArea" class="hidden selection-panel">
+                <h3>Preparación de Batalla: <span id="selectedCharacterName"></span></h3>
+                
+                <div id="battlePreview" class="battle-preview">
+                    
+                    <div class="character-display">
+                        <div class="hp-bar-container">
+                            <div id="playerHpBar" class="hp-bar" style="width: 100%;"></div>
+                            <span id="playerHpText" class="hp-text">100 / 100</span>
+                        </div>
+                        <img id="playerImage" src="" alt="Tu Personaje" class="hidden">
+                    </div>
+
+                    <div class="vs-text">VS</div>
+                    
+                    <div class="character-display">
+                        <div class="hp-bar-container">
+                            <div id="opponentHpBar" class="hp-bar" style="width: 100%;"></div>
+                            <span id="opponentHpText" class="hp-text">100 / 100</span>
+                        </div>
+                        <img id="opponentImage" src="/ImagenContrincante.jpg" alt="Contrincante" class="hidden">
+                    </div>
+                </div>
+                <div id="initialSelectionControls">
+                    <p class="element-choice-instruction">Elige **un** elemento de ataque y **uno** de defensa para este combate:</p>
+
+                    <div class="selection-row">
+                        <div class="selection-group">
+                            <h4>Elementos de Ataque disponibles:</h4>
+                            <div id="availableAttackElements" class="element-options"></div>
+                        </div>
+                        
+                        <div class="selection-group">
+                            <h4>Elementos de Defensa disponibles:</h4>
+                            <div id="availableDefenseElements" class="element-options"></div>
+                        </div>
+                    </div>
+
+                    <button id="startArenaBtn" disabled>Iniciar Combate</button> <button id="cancelSelectionBtn">Cancelar Selección</button>
+                </div>
+
+                <div id="combatControls" class="hidden">
+                    <div id="roundSelectionControls" style="margin-top: 10px; margin-bottom: 20px;">
+                        <p class="element-choice-instruction">Selección de Elementos para esta Ronda:</p>
+                        <div class="selection-row">
+                            <div class="selection-group">
+                                <h4>Ataque (Actual: <span id="currentRoundAttack"></span>):</h4>
+                                <div id="roundAttackElements" class="element-options"></div>
+                            </div>
+                            
+                            <div class="selection-group">
+                                <h4>Defensa (Actual: <span id="currentRoundDefense"></span>):</h4>
+                                <div id="roundDefenseElements" class="element-options"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Elige tu Movimiento (Ronda <span id="roundNumber">0</span>)</h4>
+                    <div class="combat-move-buttons">
+                        <button id="moveAttack" data-move="Ataque fuerte">Ataque fuerte (⚔️)</button>
+                        <button id="moveBlock" data-move="Bloqueo">Bloqueo (🛡️)</button>
+                        <button id="moveCounter" data-move="Contraataque">Contraataque (🔄)</button>
+                    </div>
+                </div>
+
+                <div id="combatEndMenu" class="hidden">
+                    <h4 id="combatEndTitle">¡Combate Terminado!</h4>
+                    <button id="startNewCombatBtn">Comenzar un nuevo combate</button>
+                    <button id="repeatCombatBtn">Repetir combate</button>
+                    <button id="exitArenaBtn">Salir de la Arena</button> </div>
+            </div>
+            
+        </div>
+        
+        <div id="rightPanel">
+            <div id="combatLogArea" class="hidden">
+                <h2>Historial</h2>
+                <div id="combatLog" class="log-output">
+                    <p>El historial aparecerá aquí...</p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script type="module" src="/js/authChecker.js"></script>
+    <script type="module" src="./Arena.js"></script> </body>
+</html>

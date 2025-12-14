@@ -15,34 +15,47 @@ body {
     background-color: #2c3e50; 
 }
 
+
 /* --- 2. BARRA DE NAVEGACIÓN (Header) --- */
 #gameHeader {
-    width: 100%;
-    background-color: #34495e; 
-    padding: 10px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    width: 100%;
+    background-color: #34495e; 
+    padding: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-#gameHeader button {
-    background-color: #e67e22; 
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 0 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.2s, transform 0.1s;
+#gameHeader button,
+/* 🚨 Nuevo selector para que el span se vea igual que el botón */
+.nav-item { 
+    background-color: #e67e22; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s, transform 0.1s;
+    /* Aseguramos que el span se comporte como un bloque en el layout flex */
+    display: inline-block; 
 }
 
 #gameHeader button:hover {
-    background-color: #d35400;
-    transform: translateY(-2px);
+    background-color: #d35400;
+    transform: translateY(-2px);
+}
+
+/* 🚨 ESTILO PARA EL BOTÓN/ITEM SELECCIONADO */
+.nav-item.selected {
+    background-color: #2ecc71; /* Verde (color de éxito/selección) */
+    cursor: default; /* No debe tener cursor de clic */
+    transform: none; /* Sin animación de movimiento */
+    border: 2px solid #27ae60;
 }
 
 /* --- 3. ÁREA PRINCIPAL DEL JUEGO --- */
@@ -56,23 +69,22 @@ body {
     background-color: transparent;
     border-radius: 0;
     overflow: hidden;
+    position: relative; /* Es importante que el área del juego sea relativa */
 }
 
 /* --- 4. FONDO DE LA ALDEA (AJUSTE A LA RESOLUCIÓN) --- */
 .village-bg {
     background-image: url('/ImagenAldea.png');
 
-    background-size: 100% 100%;   /* 🔥 ESTIRA EN AMBAS DIRECCIONES */
+    background-size: 100% 100%;   /* MANTENEMOS: ESTIRA EN AMBAS DIRECCIONES */
     background-repeat: no-repeat;
     background-position: center;
 
     width: 100vw;
-    height: calc(100vh - 60px);
-    position: relative;
+    height: calc(100vh - 60px); /* MANTENEMOS: Altura completa menos el header */
+    position: relative; /* MANTENEMOS: Debe ser relativo al gameArea */
 }
 
-
-/* 🚨 ELIMINAMOS #welcomeBox CSS */
 
 /* --- 5. ÁREAS INTERACTIVAS (Botones sobre los edificios) --- */
 #villageContent {
@@ -103,7 +115,52 @@ body {
     transform: scale(1.05);
 }
 
-/* 🚨 POSICIONAMIENTO DE LOS BOTONES (Ajustados a tu imagen de Aldea) */
+/* --- 6. BARRA DE RECURSOS (Mejorada) --- */
+#resourceDisplay {
+    width: 100%;
+    background-color: rgba(44, 62, 80, 0.95); 
+    border-top: 3px solid #f39c12; 
+    padding: 8px 10px; 
+    box-sizing: border-box;
+    
+    /* MEJORA CLAVE DE DISPOSICIÓN: */
+    display: flex;
+    justify-content: space-evenly; 
+    flex-wrap: nowrap; 
+    min-height: 55px; 
+    align-items: center; 
+    
+    z-index: 100;
+    position: fixed; 
+    bottom: 0;
+    left: 0;
+}
+
+.resource-item {
+    font-size: 1.0em; 
+    font-weight: bold;
+    color: #ecf0f1; 
+    margin: 0 10px; 
+    padding: 5px 8px; 
+    border-radius: 4px; 
+    background: rgba(0, 0, 0, 0.4);
+    min-width: 180px; 
+    max-width: 200px; 
+    text-align: left; 
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    border: 1px solid transparent;
+    transition: background-color 0.2s, border 0.2s;
+}
+
+.resource-item:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid #f39c12;
+}
+
+
+/* POSICIONAMIENTO DE LOS BOTONES (Añadiendo los nuevos y Arena) */
 
 /* WORKSHOP (Arriba izquierda) */
 #workshopArea { 
@@ -115,7 +172,7 @@ body {
     top: 25%; 
     left: 48%; 
 }
-/* TRAINING (Derecha, centro) */
+/* TRAINING (Derecha, centro) - SE MANTIENE */
 #trainingArea { 
     top: 50%; 
     left: 70%; 
@@ -125,8 +182,46 @@ body {
     top: 75%; 
     left: 55%; 
 }
-/* HUT (Izquierda, abajo) - Ubicación de ejemplo */
+/* HUT (Izquierda, abajo) */
 #hutArea {
     top: 70%;
     left: 25%;
+}
+
+/* DEPÓSITO */
+#depotArea {
+    top: 55%; 
+    left: 30%; 
+}
+/* LABORATORY */
+#laboratoryArea {
+    top: 40%; 
+    left: 55%; 
+}
+/* FIELDS */
+#fieldsArea {
+    top: 85%; 
+    left: 40%;
+}
+/* CLAN */
+#clanArea {
+    top: 15%; 
+    left: 30%; 
+}
+/* 🚨 NUEVO: ARENA */
+#arenaArea { 
+    top: 40%; 
+    left: 75%; 
+}
+/* FIN DE POSICIONAMIENTOS */
+
+
+/* ESTILOS CONDICIONALES */
+.resource-item.low-limit {
+    border-left: 5px solid #e74c3c; 
+}
+
+.resource-item.high-limit {
+    border-left: 5px solid #2ecc71; 
+    background-color: rgba(46, 204, 113, 0.15); 
 }
