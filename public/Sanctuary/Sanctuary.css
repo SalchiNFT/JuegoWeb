@@ -2,86 +2,192 @@
 /* public/Sanctuary/Sanctuary.css */
 /* ================================================= */
 
-/* --- ESTILOS BASE --- */
+/* ===================== */
+/* ESTILOS BASE */
+/* ===================== */
+
 body {
-    font-family: 'Arial', sans-serif; margin: 0; padding: 0;
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: flex-start; min-height: 100vh; background-color: #2c3e50; 
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    background-color: #2c3e50;
 }
 
-/* Header y Navegación */
+/* ===================== */
+/* HEADER / NAVEGACIÓN */
+/* ===================== */
+
 #gameHeader {
-    width: 100%; background-color: #34495e; padding: 10px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); display: flex;
-    justify-content: center; position: sticky; top: 0; z-index: 1000;
+    width: 100%;
+    background-color: #34495e;
+    padding: clamp(8px, 1.5vw, 12px) 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
+
 #gameHeader button {
-    background-color: #e67e22; color: white; border: none;
-    padding: 10px 20px; margin: 0 5px; border-radius: 5px;
-    cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.1s;
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    padding: clamp(8px, 1.2vw, 12px) clamp(14px, 2vw, 22px);
+    margin: 0 clamp(4px, 1vw, 8px);
+    border-radius: clamp(4px, 0.8vw, 6px);
+    cursor: pointer;
+    font-size: clamp(13px, 1.4vw, 16px);
+    transition: background-color 0.2s, transform 0.1s;
 }
+
 #gameHeader button:hover {
-    background-color: #d35400; transform: translateY(-2px);
+    background-color: #d35400;
+    transform: translateY(-2px);
 }
 
-/* Estilos de la zona de juego */
+/* ===================== */
+/* ÁREA DE JUEGO */
+/* ===================== */
+
 #gameArea {
-    width: 90%; max-width: 1200px; flex-grow: 1; margin: 20px 0;
-    padding: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    background-color: #2c3e50; border-radius: 8px; overflow: hidden;
+    width: 92%;
+    max-width: 1200px;
+    flex-grow: 1;
+    margin: clamp(10px, 2vw, 20px) 0;
+    padding: clamp(8px, 1.5vw, 15px);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    background-color: #2c3e50;
+    border-radius: clamp(6px, 1vw, 10px);
+    overflow: hidden;
 }
 
-/* --- ESTILOS ESPECÍFICOS DEL SANCTUARY --- */
+/* ===================== */
+/* SANCTUARY */
+/* ===================== */
 
 .sanctuary-bg {
-    background-image: url('/ImagenCreacion.jpg'); 
-    background-size: cover; background-position: center;
-    min-height: 70vh; width: 100%; border-radius: 5px;
-    position: relative; padding: 20px; display: flex;
-    justify-content: center; align-items: center;
+    background-image: url('/ImagenCreacion.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    min-height: calc(100vh - 120px);
+    width: 100%;
+    border-radius: clamp(6px, 1vw, 10px);
+
+    padding: clamp(10px, 2vw, 20px);
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
+
+/* ===================== */
+/* CONTENIDO PRINCIPAL */
+/* ===================== */
 
 #sanctuaryContent {
-    background-color: rgba(0, 0, 0, 0.9); 
-    color: white; padding: 30px; border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8); width: 90%;
-    max-width: 800px; text-align: center;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+
+    padding: clamp(15px, 2vw, 30px);
+    border-radius: clamp(8px, 1.5vw, 12px);
+
+    width: 100%;
+    max-width: min(900px, 95vw);
+
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
-#sanctuaryContent h2, h3, h4 {
-    color: #f39c12; margin-bottom: 15px;
-}
-hr { border-color: #e67e22; margin: 20px 0; }
+/* ===================== */
+/* TÍTULOS */
+/* ===================== */
 
-/* Mensajes de error */
+#sanctuaryContent h2 {
+    font-size: clamp(18px, 2.5vw, 26px);
+    color: #f39c12;
+    margin-bottom: clamp(10px, 1.5vw, 18px);
+}
+
+#sanctuaryContent h3 {
+    font-size: clamp(16px, 2vw, 22px);
+    color: #f39c12;
+    margin-bottom: clamp(8px, 1.2vw, 14px);
+}
+
+#sanctuaryContent h4 {
+    font-size: clamp(14px, 1.8vw, 18px);
+    color: #f39c12;
+    margin-bottom: clamp(6px, 1vw, 12px);
+}
+
+hr {
+    border-color: #e67e22;
+    margin: clamp(10px, 1.5vw, 20px) 0;
+}
+
+/* ===================== */
+/* MENSAJES */
+/* ===================== */
+
 #messageBox {
-    padding: 10px; margin-bottom: 15px; border-radius: 5px;
-    color: #c0392b; background-color: #fbecec; border: 1px solid #c0392b;
-    font-weight: bold; display: none; 
+    padding: clamp(8px, 1.2vw, 12px);
+    margin-bottom: clamp(8px, 1.2vw, 15px);
+    border-radius: 5px;
+    color: #c0392b;
+    background-color: #fbecec;
+    border: 1px solid #c0392b;
+    font-weight: bold;
+    display: none;
 }
-#messageBox.visible { display: block; }
-.hidden { display: none !important; }
 
-/* 🚨 CUADRÍCULA DE SLOTS */
+#messageBox.visible {
+    display: block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ===================== */
+/* SLOTS DE PERSONAJES */
+/* ===================== */
+
 #characterSlots {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 columnas */
-    gap: 15px;
-    margin: 20px 0;
+    grid-template-columns: repeat(3, 1fr); /* 🔒 SIEMPRE 3 */
+    gap: clamp(8px, 1.5vw, 15px);
+    margin: clamp(10px, 1.5vw, 18px) 0;
+    justify-items: center;
 }
 
 .slot {
-    background-color: #34495e; 
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    background-color: #34495e;
     border: 2px solid #5d6d7e;
-    border-radius: 8px;
-    padding: 15px;
-    height: 100px; /* Altura fija para la visualización */
+    border-radius: clamp(6px, 1vw, 10px);
+
+    padding: clamp(6px, 1vw, 10px);
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s;
+
+    font-size: clamp(11px, 1.2vw, 14px);
+    text-align: center;
 }
 
 .slot:hover {
@@ -90,62 +196,91 @@ hr { border-color: #e67e22; margin: 20px 0; }
 
 .slot.empty {
     color: #f39c12;
-    font-size: 40px;
+    font-size: clamp(28px, 4vw, 40px);
     font-weight: bold;
     border-style: dashed;
 }
 
 .slot.full {
-    background-color: #27ae60; /* Verde para slot lleno */
+    background-color: #27ae60;
     color: white;
     font-weight: bold;
-    font-size: 14px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     border: 2px solid #2ecc71;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    line-height: 1.2;
 }
 
-/* --- ESTILOS DEL FORMULARIO DE CREACIÓN (Area oculta) --- */
+/* ===================== */
+/* FORMULARIO */
+/* ===================== */
 
-.input-group { margin-bottom: 15px; }
+.input-group {
+    margin-bottom: clamp(10px, 1.5vw, 15px);
+}
 
-.input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
 
 .input-group input[type="text"] {
-    width: 80%; padding: 8px; border: 1px solid #e67e22;
-    border-radius: 4px; background-color: #34495e; color: white;
+    width: 80%;
+    padding: clamp(6px, 1vw, 10px);
+    border: 1px solid #e67e22;
+    border-radius: 4px;
+    background-color: #34495e;
+    color: white;
+    font-size: clamp(13px, 1.4vw, 15px);
 }
 
-/* SELECCIÓN DE HABILIDADES (Elementos) */
+/* ===================== */
+/* SELECCIÓN DE ELEMENTOS */
+/* ===================== */
+
 .selection-grid {
-    display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;
-    margin-bottom: 20px; text-align: left;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: clamp(6px, 1vw, 10px);
+    margin-bottom: clamp(10px, 1.5vw, 20px);
 }
 
 .selection-grid label {
-    cursor: pointer; background-color: #5d6d7e; padding: 8px 15px;
-    border-radius: 5px; transition: background-color 0.2s;
-    font-weight: normal;
+    cursor: pointer;
+    background-color: #5d6d7e;
+    padding: clamp(6px, 1vw, 10px) clamp(10px, 1.5vw, 16px);
+    border-radius: 5px;
+    font-size: clamp(12px, 1.4vw, 14px);
 }
 
 .selection-grid label:has(input:checked) {
-    background-color: #3498db; /* Azul al seleccionar */
+    background-color: #3498db;
     font-weight: bold;
     border: 1px solid white;
 }
 
 .selection-grid input[type="checkbox"] {
-    margin-right: 5px; display: none;
+    display: none;
 }
 
-/* Botones de Formulario */
+/* ===================== */
+/* BOTONES */
+/* ===================== */
+
 #creationForm button {
-    padding: 10px 20px; border-radius: 5px; cursor: pointer;
-    font-size: 16px; font-weight: bold; margin: 5px;
-    transition: background-color 0.2s;
+    padding: clamp(8px, 1.2vw, 12px) clamp(14px, 2vw, 20px);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: clamp(13px, 1.4vw, 16px);
+    font-weight: bold;
+    margin: clamp(4px, 1vw, 8px);
 }
 
 #creationForm button[type="submit"] {
-    background-color: #c0392b; color: white; border: none;
+    background-color: #c0392b;
+    color: white;
+    border: none;
 }
 
 #creationForm button[type="submit"]:hover {
@@ -153,9 +288,29 @@ hr { border-color: #e67e22; margin: 20px 0; }
 }
 
 #creationForm button#cancelCreation {
-    background-color: #7f8c8d; color: white; border: none;
+    background-color: #7f8c8d;
+    color: white;
+    border: none;
 }
 
 #creationForm button#cancelCreation:hover {
     background-color: #95a5a6;
+}
+
+/* ===================== */
+/* LAYOUT 2 COLUMNAS */
+/* ===================== */
+
+.sanctuary-layout {
+    display: flex;
+    gap: clamp(15px, 2vw, 30px);
+    align-items: flex-start;
+}
+
+.sanctuary-left {
+    width: 35%;
+}
+
+.sanctuary-right {
+    width: 65%;
 }

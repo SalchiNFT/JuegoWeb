@@ -4,57 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santuario</title>
-    
     <link rel="stylesheet" href="/Sanctuary/Sanctuary.css"> 
-    
 </head>
 <body>
-    
-    <div id="gameHeader" style="width: 100%; text-align: left; padding: 10px 0;">
-        <button onclick="window.location.href='../Village/Village.html'" style="background-color: #3498db; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">
+
+<div id="gameHeader" style="width: 100%; text-align: left; padding: 10px 0;">
+    <button onclick="window.location.href='../Village/Village.html'"
+        style="background-color: #3498db; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">
         ⬅️ Volver a Village
-        </button>
-    </div>
-    
-    <div id="gameArea">
-        <div class="sanctuary-bg">
-            <div id="sanctuaryContent">
-                <h2>Gestión de Personajes (Slots: 10)</h2>
-                
-                <div id="characterSlots">
-                    </div>
+    </button>
+</div>
 
-                <div id="messageBox" class="hidden"></div>
-                
-                <hr>
+<div id="gameArea">
+    <div class="sanctuary-bg">
+        <div id="sanctuaryContent">
 
-                <div id="creationArea" class="hidden">
-                    <h3>Crear Nuevo Campeón</h3>
-                    <form id="creationForm">
-                        
-                        <div class="input-group">
-                            <label for="name">Nombre (máx. 20 caracteres):</label>
-                            <input type="text" id="name" name="name" maxlength="20" required>
-                        </div>
-                        
-                        <h4>Selecciona 2 Elementos de Ataque</h4>
-                        <div id="attackSelection" class="selection-grid">
-                            </div>
+            <h2>Gestión de Personajes (Slots: 3)</h2>
 
-                        <h4>Selecciona 2 Elementos de Defensa</h4>
-                        <div id="defenseSelection" class="selection-grid">
-                            </div>
-                        
-                        <button type="submit">Comenzar Aventura</button>
-                        <button type="button" id="cancelCreation">Cancelar</button>
-                    </form>
+            <div class="sanctuary-layout">
+
+                <!-- COLUMNA IZQUIERDA -->
+                <div class="sanctuary-left">
+                    <h3>Campeones</h3>
+                    <div id="characterSlots" data-max-slots="3"></div>
                 </div>
 
+                <!-- COLUMNA DERECHA -->
+                <div class="sanctuary-right">
+
+                    <div id="messageBox" class="hidden"></div>
+
+                    <div id="creationArea" class="hidden">
+                        <h3>Crear Nuevo Campeón</h3>
+
+                        <form id="creationForm">
+
+                            <div class="input-group">
+                                <label for="name">Nombre (máx. 20 caracteres):</label>
+                                <input type="text" id="name" name="name" maxlength="20" required>
+                            </div>
+
+                            <!-- ESTADÍSTICAS BASE -->
+                            <div class="input-group">
+                                <label>Estadísticas base</label>
+                                <ul style="list-style:none; padding-left:0; font-size:14px;">
+                                    <li>Workshop (Manufactura): <strong>1</strong></li>
+                                    <li>Fields (Agricultura): <strong>1</strong></li>
+                                    <li>Laboratory (Investigación): <strong>1</strong></li>
+                                    <li>Arena (Combate): <strong>1</strong></li>
+                                    <li>Expedition:</li>
+                                    <ul style="list-style:none; padding-left:15px;">
+                                        <li>Tala: <strong>1</strong></li>
+                                        <li>Cuero: <strong>1</strong></li>
+                                        <li>Minería: <strong>1</strong></li>
+                                        <li>Cantera: <strong>1</strong></li>
+                                    </ul>
+                                </ul>
+                            </div>
+
+                            <h4>Selecciona 2 Elementos de Ataque</h4>
+                            <div id="attackSelection" class="selection-grid"></div>
+
+                            <h4>Selecciona 2 Elementos de Defensa</h4>
+                            <div id="defenseSelection" class="selection-grid"></div>
+
+                            <button type="submit">Comenzar Aventura</button>
+                            <button type="button" id="cancelCreation">Cancelar</button>
+
+                        </form>
+                    </div>
+
+                </div>
             </div>
+
         </div>
     </div>
+</div>
 
-    <script type="module" src="/Sanctuary/Sanctuary.js"></script>
-    
+<script type="module" src="/Sanctuary/Sanctuary.js"></script>
 </body>
 </html>
